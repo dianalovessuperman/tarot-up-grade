@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -253,7 +253,6 @@
             background: rgba(226, 201, 116, 0.3);
         }
 
-        /* Сетка Галереи Арканов */
         .cards-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -313,6 +312,79 @@
             margin-top: 3px;
         }
 
+        /* --- СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (MODAL) --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 3, 13, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-card {
+            background: linear-gradient(145deg, rgba(28, 14, 40, 0.95) 0%, rgba(13, 6, 20, 0.98) 100%);
+            border: 1.5px solid var(--gold-glow);
+            border-radius: 24px;
+            padding: 22px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(226, 201, 116, 0.3), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            text-align: center;
+            position: relative;
+            transform: scale(0.95);
+            animation: popUp 0.3s forwards ease-out;
+        }
+
+        .modal-card img.modal-img {
+            max-width: 110px;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1.5px solid var(--gold-glow);
+            margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.2);
+        }
+
+        .modal-title {
+            color: var(--gold-glow);
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .btn-modal-close {
+            background: linear-gradient(135deg, rgba(226, 201, 116, 0.2) 0%, rgba(226, 201, 116, 0.05) 100%);
+            color: var(--gold-glow);
+            border: 1px solid var(--gold-glow);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-close:hover {
+            background: rgba(226, 201, 116, 0.3);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes gentleSway { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
         @keyframes catBreathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
@@ -327,6 +399,16 @@
 <body>
 
 <div class="phone-container">
+
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО (MODAL) ДЛЯ УВЕДОМЛЕНИЙ И КАРТ -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-card">
+            <img id="modal-image" class="modal-img" src="" alt="Аркан" onerror="this.style.display='none'">
+            <h3 id="modal-title" class="modal-title">Заголовок</h3>
+            <div id="modal-text" class="modal-text">Текст описания...</div>
+            <button class="btn-modal-close" onclick="closeModal()">Продолжить</button>
+        </div>
+    </div>
 
     <!-- ЭКРАН 1: ПРОБУЖДЕНИЕ (ЗАГРУЗКА) -->
     <div id="loading-screen" class="screen active-screen" style="justify-content: center; align-items: center;">
@@ -359,7 +441,7 @@
         <div class="path-container" id="map-tree"></div>
     </div>
 
-    <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ (БЕЗ ЗОДИАКА) -->
+    <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ -->
     <div id="arcanum-screen" class="screen">
         <div class="top-bar">
             <div class="stat-badge">✨ Справочник</div>
@@ -473,20 +555,20 @@
         }
     ];
 
-    // СПИСОК АРКАНОВ (ВКЛЮЧАЯ IV, VIII И IX БЕЗ ЗОДИАКА)
     const arcanumData = [
-        { num: "0", name: "Дурак", image: "fool.png", desc: "Аркан начала, доверия Вселенной, чистого листа и смелости совершить шаг в неизвестность." },
-        { num: "IV", name: "Император", image: "emperor.png", desc: "Аркан структуры, дисциплины, власти, ответственности и создания нерушимой основы." },
-        { num: "VI", name: "Влюбленные", image: "love.png", desc: "Аркан выбора сердца, дуальности, союзничества и искренней гармонии с собой." },
-        { num: "VII", name: "Колесница", image: "chariot.png", desc: "Аркан триумфа воли, укрощения внутренних противоречий и стремительного движения вперед." },
-        { num: "VIII", name: "Сила", image: "strength.png", desc: "Аркан мягкой душевной стойкости, укрощения страстей любви и благородства без насилия." },
-        { num: "IX", name: "Отшельник", image: "hermit.png", desc: "Аркан глубокой мудрости, поисков внутреннего света, осознанности и тишины духа." },
-        { num: "XVI", name: "Башня", image: "tower.png", desc: "Аркан крушения ложных иллюзий, очищения и освобождения места под истинное будущее." },
-        { num: "XVIII", name: "Луна", image: "moon.png", desc: "Аркан подсознания, интуиции, работы с Тенью и прохождения сквозь туман страхов." }
+        { num: "0", name: "Дурак", image: "fool.png", desc: "Аркан начала, доверия Вселенной и чистого листа. Символизирует смелость совершить шаг в неизвестное без страха перед ошибкой." },
+        { num: "IV", name: "Император", image: "emperor.png", desc: "Аркан структуры, дисциплины, власти и ответственности. Учит управлять хаосом и создавать нерушимую основу для своих идей." },
+        { num: "VI", name: "Влюбленные", image: "love.png", desc: "Аркан выбора сердца, дуальности и искренней гармонии. Напоминает, что истинный выбор всегда делается из любви, а не из страха." },
+        { num: "VII", name: "Колесница", image: "chariot.png", desc: "Аркан триумфа воли и укрощения противоположностей. Дарует умение управлять своими эмоциями и уверенно вести жизнь к цели." },
+        { num: "VIII", name: "Сила", image: "strength.png", desc: "Аркан мягкой душевной стойкости и укрощения страстей. Показывает, что истинная сила кроется в милосердии и принятии, а не в агрессии." },
+        { num: "IX", name: "Отшельник", image: "hermit.png", desc: "Аркан глубокой мудрости и поисков внутреннего света. Призывает замедлиться, услышать тишину духа и найти ответы внутри себя." },
+        { num: "XVI", name: "Башня", image: "tower.png", desc: "Аркан крушения ложных иллюзий и освобождения. Разрушает то, что отжило, ради постройки нового, искреннего фундамента." },
+        { num: "XVIII", name: "Луна", image: "moon.png", desc: "Аркан подсознания, тайных страхов и тонкой интуиции. Учит проходить сквозь туман неизвестности и принимать свою Тень." }
     ];
 
     let userXP = 0;
     let currentQuestId = 0;
+    let pendingNextQuest = null;
 
     window.onload = function() {
         renderMapTree();
@@ -555,7 +637,7 @@
         arcanumData.forEach(item => {
             const card = document.createElement('div');
             card.className = 'arcanum-card';
-            card.onclick = () => alert(`✨ ${item.num}. ${item.name}\n\n${item.desc}`);
+            card.onclick = () => showCardDetails(item);
 
             const img = document.createElement('img');
             img.src = item.image;
@@ -584,6 +666,10 @@
 
             grid.appendChild(card);
         });
+    }
+
+    function showCardDetails(item) {
+        showModal(`${item.num}. ${item.name}`, item.desc, item.image);
     }
 
     function startQuest(id) {
@@ -617,8 +703,6 @@
     }
 
     function makeChoice(choice, quest) {
-        alert(choice.msg);
-
         if (choice.isCorrect) {
             userXP += 15;
             document.getElementById('xp-count').innerText = userXP;
@@ -627,15 +711,51 @@
             const nextQuest = quests.find(q => q.id === nextId);
             if (nextQuest) {
                 nextQuest.unlocked = true;
+                pendingNextQuest = nextQuest;
+            } else {
+                pendingNextQuest = null;
             }
 
             renderMapTree();
+            showModal("✨ Мудрое решение!", choice.msg, quest.image, true);
+        } else {
+            pendingNextQuest = null;
+            showModal("🔮 Тень сомнения", choice.msg, quest.image, false);
+        }
+    }
+
+    function showModal(title, text, imageSrc = null, isSuccess = true) {
+        const modal = document.getElementById('custom-modal');
+        const titleEl = document.getElementById('modal-title');
+        const textEl = document.getElementById('modal-text');
+        const imgEl = document.getElementById('modal-image');
+
+        titleEl.innerText = title;
+        textEl.innerText = text;
+
+        if (imageSrc) {
+            imgEl.src = imageSrc;
+            imgEl.style.display = 'inline-block';
+        } else {
+            imgEl.style.display = 'none';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('custom-modal');
+        modal.style.display = 'none';
+
+        // Если ответ был правильным в игре, переходим обратно на карту
+        if (document.getElementById('game-screen').classList.contains('active-screen')) {
+            const quest = quests.find(q => q.id === currentQuestId);
             goToScreen('menu-screen');
 
             const catText = document.getElementById('cat-menu-text');
-            if (nextQuest) {
-                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${nextQuest.num}) теперь открыты!»`;
-            } else {
+            if (pendingNextQuest) {
+                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${pendingNextQuest.num}) теперь открыты!»`;
+            } else if (quest && quest.id === quests.length - 1) {
                 catText.innerText = "«Потрясающе! Все тайны Арканов в этой обители открыты твоей воле!»";
             }
         }

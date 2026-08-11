@@ -1,3 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обитель Арканов: Пробуждение Источника</title>
+    <style>
+        :root {
+            --bg-dark: #0d0614; 
+            --gold-glow: #e2c974;
+            --text-light: #f5f0fa;
+            --panel-overlay: rgba(22, 11, 31, 0.85);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Georgia', serif;
+            padding: 10px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 430px;
+            min-height: 92vh;
+            background-image: url('fon.png'); 
+            background-size: cover;
+            background-position: center;
+            background-color: var(--bg-dark); 
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(226, 201, 116, 0.15);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-container::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(98, 0, 234, 0.05) 0%, transparent 70%);
+            animation: drift 12s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .screen { 
+            display: none; 
+            z-index: 2; 
+            position: relative; 
+            flex-direction: column;
+            height: 100%;
+            flex-grow: 1;
+        }
+        
+        .screen.active-screen { 
+            display: flex !important; 
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(222, 201, 116, 0.2);
+        }
+
+        .stat-badge {
+            background: rgba(13, 6, 20, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 201, 116, 0.3);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .mode-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            z-index: 2;
+        }
+
+        .btn-nav-mode {
+            flex: 1;
+            padding: 10px;
+            background: rgba(22, 11, 31, 0.7);
+            border: 1px solid rgba(226, 201, 116, 0.3);
+            color: var(--text-light);
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-nav-mode.active {
+            background: rgba(226, 201, 116, 0.2);
+            border-color: var(--gold-glow);
+            color: var(--gold-glow);
+            box-shadow: 0 0 10px rgba(226, 201, 116, 0.3);
+        }
+
+        .mystic-panel {
+            background: var(--panel-overlay);
+            backdrop-filter: blur(10px);
+            color: var(--text-light);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(226, 201, 116, 0.2);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            animation: gentleSway 4s ease-in-out infinite alternate;
+        }
+
+        .card-visual {
+            max-width: 140px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 15px auto;
+            border-radius: 12px;
+            border: 2px solid var(--gold-glow);
+            box-shadow: 0 0 20px rgba(226, 201, 116, 0.3);
+        }
+
+        .btn-choice {
+            background: linear-gradient(135deg, rgba(43, 24, 61, 0.85) 0%, rgba(22, 11, 31, 0.95) 100%);
+            color: #f5f0fa;
+            border: 1px solid rgba(226, 201, 116, 0.35);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-family: 'Georgia', serif;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-bottom: 14px;
+            text-align: left;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(226, 201, 116, 0.05);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-choice:hover {
+            background: linear-gradient(135deg, rgba(62, 33, 89, 0.9) 0%, rgba(33, 16, 48, 0.95) 100%);
+            border-color: #e2c974;
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .cat-instructor-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(13, 6, 20, 0.7);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(226, 201, 116, 0.15);
+        }
+
+        .cat-avatar {
+            width: 65px;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--gold-glow);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.3);
+            animation: catBreathe 3s ease-in-out infinite alternate; 
+        }
+
+        .cat-bubble {
+            background: rgba(255,255,255,0.07);
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-style: italic;
+            flex-grow: 1;
+            border-left: 3px solid var(--gold-glow);
+        }
+
+        .path-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .path-node {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #25123e 0%, #0d0614 100%);
+            color: var(--gold-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid rgba(226, 201, 116, 0.4);
+            box-shadow: 0 0 20px rgba(226, 201, 116, 0.25), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .path-node:not(.locked):hover {
+            transform: scale(1.15);
+            border-color: var(--gold-glow);
+            color: #ffffff;
+            text-shadow: 0 0 8px var(--gold-glow);
+            box-shadow: 0 0 30px rgba(226, 201, 116, 0.6), inset 0 0 10px rgba(226, 201, 116, 0.3);
+        }
+
+        .path-node.locked {
+            background: radial-gradient(circle, #1a1520 0%, #0c0910 100%) !important;
+            color: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(93, 80, 105, 0.2) !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+        }
+
+        .node-label {
+            position: absolute;
+            width: 180px;
+            text-align: center;
+            bottom: -28px;
+            font-size: 13px;
+            font-family: 'Georgia', serif;
+            color: var(--text-light);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            opacity: 0.85;
+            transition: opacity 0.3s;
+        }
+
+        .node-separator {
+            width: 2px;
+            height: 25px;
+            background: rgba(226, 201, 116, 0.3);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            overflow-y: auto;
+            max-height: 55vh;
+            padding-right: 5px;
+        }
+
+        .arcanum-card {
+            background: var(--panel-overlay);
+            border: 1px solid rgba(226, 201, 116, 0.3);
+            border-radius: 16px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .arcanum-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-glow);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.25);
+        }
+
+        .arcanum-card img {
+            width: 75px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(226, 201, 116, 0.3);
+        }
+
+        .arcanum-card-fallback {
+            width: 75px;
+            height: 110px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px dashed rgba(226, 201, 116, 0.4);
+            background: rgba(13, 6, 20, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--gold-glow);
+            font-weight: bold;
+        }
+
+        .arcanum-num-tag {
+            font-size: 11px;
+            color: var(--gold-glow);
+            letter-spacing: 1px;
+            margin-top: 3px;
+        }
+
+        /* --- СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (MODAL) --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 3, 13, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-card {
+            background: linear-gradient(145deg, rgba(28, 14, 40, 0.95) 0%, rgba(13, 6, 20, 0.98) 100%);
+            border: 1.5px solid var(--gold-glow);
+            border-radius: 24px;
+            padding: 22px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(226, 201, 116, 0.3), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            text-align: center;
+            position: relative;
+            transform: scale(0.95);
+            animation: popUp 0.3s forwards ease-out;
+        }
+
+        .modal-card img.modal-img {
+            max-width: 110px;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1.5px solid var(--gold-glow);
+            margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.2);
+        }
+
+        .modal-title {
+            color: var(--gold-glow);
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .btn-modal-close {
+            background: linear-gradient(135deg, rgba(226, 201, 116, 0.2) 0%, rgba(226, 201, 116, 0.05) 100%);
+            color: var(--gold-glow);
+            border: 1px solid var(--gold-glow);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-close:hover {
+            background: rgba(226, 201, 116, 0.3);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes gentleSway { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
+        @keyframes catBreathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+        .big-cat-entrance {
+            animation: fadeInSpawn 2s ease-out forwards;
+            text-align: center;
+        }
+        @keyframes fadeInSpawn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО (MODAL) ДЛЯ УВЕДОМЛЕНИЙ И КАРТ -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-card">
+            <img id="modal-image" class="modal-img" src="" alt="Аркан" onerror="this.style.display='none'">
+            <h3 id="modal-title" class="modal-title">Заголовок</h3>
+            <div id="modal-text" class="modal-text">Текст описания...</div>
+            <button class="btn-modal-close" onclick="closeModal()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 1: ПРОБУЖДЕНИЕ (ЗАГРУЗКА) -->
+    <div id="loading-screen" class="screen active-screen" style="justify-content: center; align-items: center;">
+        <div class="big-cat-entrance">
+            <img src="cat.png" style="max-width: 220px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 30px rgba(226,201,116,0.4);" alt="Хранитель" onerror="this.style.display='none'">
+            <h2 style="color: var(--gold-glow); margin-top:20px; text-shadow: 0 4px 10px #000;">Приветствую, Мастер</h2>
+            <p style="font-style: italic; text-shadow: 0 2px 5px #000;">«Твой Источник спал слишком долго. Пора пробудить память древних карт... Я укажу дорогу».</p>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 2: КАРТА АРКАНОВ (КВЕСТЫ) -->
+    <div id="menu-screen" class="screen">
+        <div class="top-bar">
+            <div class="stat-badge">🔮 Мастер Арканов</div>
+            <div class="stat-badge">✨ Сила: <span id="xp-count">0</span></div>
+        </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode active" onclick="switchMode('menu-screen')">📜 Испытания</button>
+            <button class="btn-nav-mode" onclick="switchMode('arcanum-screen')">🃏 Книга Арканов</button>
+        </div>
+        
+        <div class="cat-instructor-box">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
+            <div class="cat-bubble" id="cat-menu-text">
+                «Мастер, Храм Судеб открыт перед тобой. С какого Аркана начнём наше вспоминание?»
+            </div>
+        </div>
+
+        <div class="path-container" id="map-tree"></div>
+    </div>
+
+    <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ -->
+    <div id="arcanum-screen" class="screen">
+        <div class="top-bar">
+            <div class="stat-badge">✨ Справочник</div>
+            <div class="stat-badge">Старшие Арканы</div>
+        </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode" onclick="switchMode('menu-screen')">📜 Испытания</button>
+            <button class="btn-nav-mode active" onclick="switchMode('arcanum-screen')">🃏 Книга Арканов</button>
+        </div>
+
+        <div class="cat-instructor-box">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
+            <div class="cat-bubble">
+                «Перед тобой карты нашего храма. Нажми на любую, чтобы изучить её тайный архетип!»
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cards-grid-container"></div>
+    </div>
+
+    <!-- ЭКРАН 3: УНИВЕРСАЛЬНЫЙ ЗАЛ ИСПЫТАНИЙ -->
+    <div id="game-screen" class="screen">
+        <div class="top-bar">
+            <button onclick="goToScreen('menu-screen')" style="background: transparent; color: var(--gold-glow); border: none; cursor: pointer; font-size: 15px;">◀ В обитель</button>
+            <div class="stat-badge" id="level-badge">XVI Аркан</div>
+        </div>
+
+        <div class="mystic-panel">
+            <img id="level-image" src="" class="card-visual" alt="Карта Аркана" onerror="this.style.display='none'">
+            <h4 style="margin-top: 0; color: var(--gold-glow); letter-spacing: 1px;" id="level-title">Запрос Силы</h4>
+            <p style="margin-bottom: 0; font-size: 15px;" id="level-text">Текст вопроса...</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: flex-end;" id="options-container"></div>
+    </div>
+
+</div>
+
 <script>
     const quests = [
         {
@@ -68,49 +551,6 @@
                 { key: "A", text: "Сцепить зубы, игнорировать слабость и продолжать доказывать всем свою силу.", isCorrect: false, msg: "❌ Опасно. Отрицание Луны приводит к тяжелым депрессиям и срывам. Тень нельзя игнорировать." },
                 { key: "B", text: "Посмотреть вглубь себя, честно признать свой кризис и пройти сквозь страх, чтобы найти новые истинные смыслы.", isCorrect: true, msg: "🔮 Ошеломительно, Мастер! Пройти сквозь Луну для мужчины — это приручить своих внутренних волков и забрать силу своей Теневой стороны. +15 к Силе!" },
                 { key: "C", text: "Попытаться кардинально сменить обстановку: бросить семью или улететь на острова.", isCorrect: false, msg: "⚠️ Бегство от себя не поможет. Куда бы ты ни поехал, твоя Луна последует за тобой." }
-            ]
-        },
-        /* --- НОВЫЕ СЛОЖНЫЕ УРОВНИ --- */
-        {
-            id: 5,
-            num: "IV",
-            name: "Император: Опора Власти",
-            title: "Запрос Силы: Трон Императора",
-            image: "emperor.png",
-            unlocked: false,
-            text: "К тебе пришел основатель крупного бизнеса. На старте компания росла на драйве и хаосе, но сейчас в процессах царит бардак, сотрудники выгорают, а прибыль падает. Он хочет 'вернуть былую свободу'. В чем искажение его восприятия?",
-            choices: [
-                { key: "A", text: "Свобода без структуры превращается в разрушительный хаос. Император должен установить жесткие стандарты, регламенты и взять ответственность.", isCorrect: true, msg: "👑 Абсолютно верно! Настоящий Император понимает: порядок и структура не закрепощают, а дают истинную оплот-опору для масштаба! +20 к Силе!" },
-                { key: "B", text: "Ему нужно уволить бунтарей и лично продавливать решения своей харизмой, как в начале.", isCorrect: false, msg: "❌ Это ловушка самодурства. Попытка управлять огромной системой вручную разрушит Империю." },
-                { key: "C", text: "Ему стоит делегировать все дела управленцам и отстраниться, чтобы сохранить ресурс.", isCorrect: false, msg: "⚠️ Ошибка. Теневой Император, потерявший контроль над базисом, неизбежно теряет свой трон." }
-            ]
-        },
-        {
-            id: 6,
-            num: "VIII",
-            name: "Сила: Кроткий Зверь",
-            title: "Запрос Силы: Приручение Льва",
-            image: "strength.png",
-            unlocked: false,
-            text: "Мать подростка в отчаянии: сын стал жестким, дерзит и замыкается. Она пробовала наказывать его, лишать гаджетов и давить авторитетом, но он отвечает еще большей агрессией. В чем ключи Аркана Сила?",
-            choices: [
-                { key: "A", text: "Усилить давление и дисциплину. Лев должен знать, кто в доме хозяин, иначе он сядет на шею.", isCorrect: false, msg: "❌ Нет! Сила — это не про насилие и подавление. Грубая сила лишь порождает еще большее сопротивление." },
-                { key: "B", text: "Смягчить хватку, убрать внешнее давление и укротить 'зверя' безусловным принятием, милосердием и мудрой нежностью.", isCorrect: true, msg: "🦁 Великое откровение! На карте Сила дева укрощает льва не кнутом, а любовью и доверием. Высшая сила кроется в душевном благородстве. +20 к Силе!" },
-                { key: "C", text: "Смириться, отстраниться и полностью предоставить подростка самому себе.", isCorrect: false, msg: "⚠️ Это равнодушие, а не Сила. Аркан требует активного душевного присутствия, а не бегства." }
-            ]
-        },
-        {
-            id: 7,
-            num: "IX",
-            name: "Отшельник: Свет Внутри",
-            title: "Запрос Силы: Фонарь Мудрости",
-            image: "hermit.png",
-            unlocked: false,
-            text: "Человек достиг всех видимых целей в обществе: деньги, статус, признание. Но внезапно он почувствовал глубокое одиночество и бессмысленность происходящего. Друзья советуют ему 'встряхнуться' и пойти на шумную вечеринку. Каков истинный совет Отшельника?",
-            choices: [
-                { key: "A", text: "Прислушаться к друзьям: одиночество опасное состояние, нужно чаще выходить в свет и отвлекаться.", isCorrect: false, msg: "❌ Нет. Попытка заглушить внутренний голод внешним шумом лишь усугубит пустоту." },
-                { key: "B", text: "Зазолироваться от мира навсегда, оборвать связи и уехать жить в глушь.", isCorrect: false, msg: "⚠️ Бегство от социума из обиды — это теневая сторона Отшельника. Суть карты в ином." },
-                { key: "C", text: "Принять эту тишину как подарок. Замедлиться, отойти от суеты и зажечь свой внутренний фонарь, чтобы переосмыслить ценности.", isCorrect: true, msg: "🕯️ Превосходно, Мастер! Отшельник уходит в себя не из-за слабости, а чтобы вернуться к людям со светом истинной мудрости. Все испытания пройдены! +25 к Силе!" }
             ]
         }
     ];
@@ -264,8 +704,7 @@
 
     function makeChoice(choice, quest) {
         if (choice.isCorrect) {
-            const rewardXP = quest.id >= 5 ? 20 : 15;
-            userXP += rewardXP;
+            userXP += 15;
             document.getElementById('xp-count').innerText = userXP;
 
             const nextId = quest.id + 1;
@@ -308,6 +747,7 @@
         const modal = document.getElementById('custom-modal');
         modal.style.display = 'none';
 
+        // Если ответ был правильным в игре, переходим обратно на карту
         if (document.getElementById('game-screen').classList.contains('active-screen')) {
             const quest = quests.find(q => q.id === currentQuestId);
             goToScreen('menu-screen');
@@ -316,7 +756,7 @@
             if (pendingNextQuest) {
                 catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${pendingNextQuest.num}) теперь открыты!»`;
             } else if (quest && quest.id === quests.length - 1) {
-                catText.innerText = "«Потрясающе! Все тайны Арканов в нашей обители открыты твоей мудрости!»";
+                catText.innerText = "«Потрясающе! Все тайны Арканов в этой обители открыты твоей воле!»";
             }
         }
     }
@@ -326,3 +766,6 @@
         document.getElementById(screenId).classList.add('active-screen');
     }
 </script>
+
+</body>
+</html>

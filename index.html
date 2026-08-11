@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -67,8 +67,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
             border-bottom: 1px solid rgba(222, 201, 116, 0.2);
         }
 
@@ -80,6 +80,34 @@
             border: 1px solid rgba(226, 201, 116, 0.3);
             font-size: 13px;
             letter-spacing: 1px;
+        }
+
+        .mode-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            z-index: 2;
+        }
+
+        .btn-nav-mode {
+            flex: 1;
+            padding: 10px;
+            background: rgba(22, 11, 31, 0.7);
+            border: 1px solid rgba(226, 201, 116, 0.3);
+            color: var(--text-light);
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-nav-mode.active {
+            background: rgba(226, 201, 116, 0.2);
+            border-color: var(--gold-glow);
+            color: var(--gold-glow);
+            box-shadow: 0 0 10px rgba(226, 201, 116, 0.3);
         }
 
         .mystic-panel {
@@ -95,7 +123,6 @@
             animation: gentleSway 4s ease-in-out infinite alternate;
         }
 
-        /* Стиль для адаптивной картинки текущей карты Таро в квесте */
         .card-visual {
             max-width: 140px;
             width: 100%;
@@ -105,22 +132,6 @@
             border-radius: 12px;
             border: 2px solid var(--gold-glow);
             box-shadow: 0 0 20px rgba(226, 201, 116, 0.3);
-        }
-
-        .btn-choice {
-            background: rgba(35, 20, 48, 0.8);
-            color: var(--text-light);
-            border: 1px solid rgba(226, 201, 116, 0.4);
-            border-bottom: 4px solid #8e7631;
-            padding: 16px;
-            font-size: 15px;
-            font-family: 'Georgia', serif;
-            border-radius: 16px;
-            cursor: pointer;
-            margin-bottom: 12px;
-            text-align: left;
-            transition: all 0.1s ease;
-            width: 100%;
         }
 
         .btn-choice {
@@ -142,18 +153,11 @@
             letter-spacing: 0.5px;
         }
 
-        /* Магическое свечение при наведении */
         .btn-choice:hover {
             background: linear-gradient(135deg, rgba(62, 33, 89, 0.9) 0%, rgba(33, 16, 48, 0.95) 100%);
             border-color: #e2c974;
             box-shadow: 0 0 15px rgba(226, 201, 116, 0.4), inset 0 0 15px rgba(226, 201, 116, 0.1);
             transform: translateY(-2px);
-        }
-
-        /* Эффект нажатия (кнопка слегка утапливается) */
-        .btn-choice:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
         }
 
         .cat-instructor-box {
@@ -163,12 +167,12 @@
             background: rgba(13, 6, 20, 0.7);
             padding: 15px;
             border-radius: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid rgba(226, 201, 116, 0.15);
         }
 
         .cat-avatar {
-            width: 70px;
+            width: 65px;
             height: auto;
             border-radius: 12px;
             border: 1px solid var(--gold-glow);
@@ -200,7 +204,6 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            /* Глубокий фиолетовый центр с золотым неоновым свечением по краю */
             background: radial-gradient(circle, #25123e 0%, #0d0614 100%);
             color: var(--gold-glow);
             display: flex;
@@ -210,13 +213,11 @@
             font-size: 20px;
             cursor: pointer;
             border: 2px solid rgba(226, 201, 116, 0.4);
-            /* Магическая аура вокруг активной карты */
             box-shadow: 0 0 20px rgba(226, 201, 116, 0.25), inset 0 0 15px rgba(226, 201, 116, 0.1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
         }
 
-        /* Эффект, когда Мастер наводит курсор на доступный уровень */
         .path-node:not(.locked):hover {
             transform: scale(1.15);
             border-color: var(--gold-glow);
@@ -225,7 +226,6 @@
             box-shadow: 0 0 30px rgba(226, 201, 116, 0.6), inset 0 0 10px rgba(226, 201, 116, 0.3);
         }
 
-        /* Заблокированные уровни (покрытые туманом забвения) */
         .path-node.locked {
             background: radial-gradient(circle, #1a1520 0%, #0c0910 100%) !important;
             color: rgba(255, 255, 255, 0.15) !important;
@@ -234,7 +234,6 @@
             cursor: not-allowed;
         }
 
-        /* Красивая подпись под кругом */
         .node-label {
             position: absolute;
             width: 180px;
@@ -248,26 +247,70 @@
             transition: opacity 0.3s;
         }
 
-        /* Подпись загорается ярче при наведении на карту */
-        .path-node:hover .node-label {
-            opacity: 1;
-            color: var(--gold-glow);
-        }
-
-        .node-label {
-            position: absolute;
-            width: 160px;
-            text-align: center;
-            bottom: -24px;
-            font-size: 12px;
-            color: var(--text-light);
-            opacity: 0.8;
-        }
-
         .node-separator {
             width: 2px;
             height: 25px;
             background: rgba(226, 201, 116, 0.3);
+        }
+
+        /* Сетка Галереи Арканов */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            overflow-y: auto;
+            max-height: 55vh;
+            padding-right: 5px;
+        }
+
+        .arcanum-card {
+            background: var(--panel-overlay);
+            border: 1px solid rgba(226, 201, 116, 0.3);
+            border-radius: 16px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .arcanum-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-glow);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.25);
+        }
+
+        .arcanum-card img {
+            width: 75px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(226, 201, 116, 0.3);
+        }
+
+        .arcanum-card-fallback {
+            width: 75px;
+            height: 110px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px dashed rgba(226, 201, 116, 0.4);
+            background: rgba(13, 6, 20, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--gold-glow);
+            font-weight: bold;
+        }
+
+        .arcanum-num-tag {
+            font-size: 11px;
+            color: var(--gold-glow);
+            letter-spacing: 1px;
+            margin-top: 3px;
         }
 
         @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -288,27 +331,54 @@
     <!-- ЭКРАН 1: ПРОБУЖДЕНИЕ (ЗАГРУЗКА) -->
     <div id="loading-screen" class="screen active-screen" style="justify-content: center; align-items: center;">
         <div class="big-cat-entrance">
-            <img src="cat.png" style="max-width: 220px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 30px rgba(226,201,116,0.4);" alt="Хранитель">
+            <img src="cat.png" style="max-width: 220px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 30px rgba(226,201,116,0.4);" alt="Хранитель" onerror="this.style.display='none'">
             <h2 style="color: var(--gold-glow); margin-top:20px; text-shadow: 0 4px 10px #000;">Приветствую, Мастер</h2>
             <p style="font-style: italic; text-shadow: 0 2px 5px #000;">«Твой Источник спал слишком долго. Пора пробудить память древних карт... Я укажу дорогу».</p>
         </div>
     </div>
 
-    <!-- ЭКРАН 2: КАРТА АРКАНОВ -->
+    <!-- ЭКРАН 2: КАРТА АРКАНОВ (КВЕСТЫ) -->
     <div id="menu-screen" class="screen">
         <div class="top-bar">
             <div class="stat-badge">🔮 Мастер Арканов</div>
             <div class="stat-badge">✨ Сила: <span id="xp-count">0</span></div>
         </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode active" onclick="switchMode('menu-screen')">📜 Испытания</button>
+            <button class="btn-nav-mode" onclick="switchMode('arcanum-screen')">🃏 Книга Арканов</button>
+        </div>
         
         <div class="cat-instructor-box">
-            <img src="cat.png" class="cat-avatar" alt="Кот">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
             <div class="cat-bubble" id="cat-menu-text">
                 «Мастер, Храм Судеб открыт перед тобой. С какого Аркана начнём наше вспоминание?»
             </div>
         </div>
 
         <div class="path-container" id="map-tree"></div>
+    </div>
+
+    <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ (БЕЗ ЗОДИАКА) -->
+    <div id="arcanum-screen" class="screen">
+        <div class="top-bar">
+            <div class="stat-badge">✨ Справочник</div>
+            <div class="stat-badge">Старшие Арканы</div>
+        </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode" onclick="switchMode('menu-screen')">📜 Испытания</button>
+            <button class="btn-nav-mode active" onclick="switchMode('arcanum-screen')">🃏 Книга Арканов</button>
+        </div>
+
+        <div class="cat-instructor-box">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
+            <div class="cat-bubble">
+                «Перед тобой карты нашего храма. Нажми на любую, чтобы изучить её тайный архетип!»
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cards-grid-container"></div>
     </div>
 
     <!-- ЭКРАН 3: УНИВЕРСАЛЬНЫЙ ЗАЛ ИСПЫТАНИЙ -->
@@ -319,9 +389,7 @@
         </div>
 
         <div class="mystic-panel">
-            <!-- Динамическое изображение карты Таро для каждого уровня -->
-            <img id="level-image" src="" class="card-visual" alt="Карта Аркана">
-            
+            <img id="level-image" src="" class="card-visual" alt="Карта Аркана" onerror="this.style.display='none'">
             <h4 style="margin-top: 0; color: var(--gold-glow); letter-spacing: 1px;" id="level-title">Запрос Силы</h4>
             <p style="margin-bottom: 0; font-size: 15px;" id="level-text">Текст вопроса...</p>
         </div>
@@ -332,7 +400,6 @@
 </div>
 
 <script>
-    // === БАЗА ДАННЫХ ИГРЫ (Все 5 уровней с вашими картинками) ===
     const quests = [
         {
             id: 0,
@@ -367,7 +434,7 @@
             num: "VII",
             name: "Колесница: Воля",
             title: "Запрос Силы: Триумф Колесницы",
-            image: "chariot.png", // Ваша картинка для 3 уровня
+            image: "chariot.png",
             unlocked: false,
             text: "Молодой руководитель выгорел дотла: он пашет 24/7 ради кресла директора, жестко прессует команду и требует идеальности, но проект буксует из-за срывов подчиненных. В чём его ошибка?",
             choices: [
@@ -381,9 +448,9 @@
             num: "0",
             name: "Дурак: Прыжок веры",
             title: "Запрос Силы: Обнуление Дурака",
-            image: "fool.png", // Ваша картинка для 4 уровня
+            image: "fool.png",
             unlocked: false,
-            text: "Успешный топ-менеджер мечтает бросить душную корпорацию ради своего дела с нуля, но его паралицует страх потерять статус, уважение коллег и остаться «никем». Чему его научит Дурак?",
+            text: "Успешный топ-менеджер мечтает бросить душную корпорацию ради своего дела с нуля, но его парализует страх потерять статус, уважение коллег и остаться «никем». Чему его научит Дурак?",
             choices: [
                 { key: "A", text: "Держаться за стабильное место, статус в обществе важнее туманных амбиций.", isCorrect: false, msg: "❌ Нет. Это выбор из эго и страха. Золотая клетка так и останется клеткой." },
                 { key: "B", text: "Ждать, пока накопится сумма, полностью исключающая любые финансовые риски.", isCorrect: false, msg: "⚠️ Иллюзия ума. Идеального момента и 100% гарантий в мире не существует." },
@@ -395,7 +462,7 @@
             num: "XVIII",
             name: "Луна: Тайны Тени",
             title: "Запрос Силы: Сумерки Луны",
-            image: "moon.png", // Ваша картинка для 5 уровня
+            image: "moon.png",
             unlocked: false,
             text: "Мужчина с виду успешен, но внутри него глубокий кризис смыслов и глухая тревога. Он боится показаться слабым и глушит это экстримом и алкоголем. Как ему пройти этот туман?",
             choices: [
@@ -406,95 +473,179 @@
         }
     ];
 
+    // СПИСОК АРКАНОВ (ВКЛЮЧАЯ IV, VIII И IX БЕЗ ЗОДИАКА)
+    const arcanumData = [
+        { num: "0", name: "Дурак", image: "fool.png", desc: "Аркан начала, доверия Вселенной, чистого листа и смелости совершить шаг в неизвестность." },
+        { num: "IV", name: "Император", image: "emperor.png", desc: "Аркан структуры, дисциплины, власти, ответственности и создания нерушимой основы." },
+        { num: "VI", name: "Влюбленные", image: "love.png", desc: "Аркан выбора сердца, дуальности, союзничества и искренней гармонии с собой." },
+        { num: "VII", name: "Колесница", image: "chariot.png", desc: "Аркан триумфа воли, укрощения внутренних противоречий и стремительного движения вперед." },
+        { num: "VIII", name: "Сила", image: "strength.png", desc: "Аркан мягкой душевной стойкости, укрощения страстей любви и благородства без насилия." },
+        { num: "IX", name: "Отшельник", image: "hermit.png", desc: "Аркан глубокой мудрости, поисков внутреннего света, осознанности и тишины духа." },
+        { num: "XVI", name: "Башня", image: "tower.png", desc: "Аркан крушения ложных иллюзий, очищения и освобождения места под истинное будущее." },
+        { num: "XVIII", name: "Луна", image: "moon.png", desc: "Аркан подсознания, интуиции, работы с Тенью и прохождения сквозь туман страхов." }
+    ];
+
     let userXP = 0;
-    let currentLevelId = 0;
+    let currentQuestId = 0;
 
-    // Входной экран кота на 3 секунды для динамики
-    setTimeout(() => {
-        renderMap();
-        goToScreen('menu-screen');
-    }, 3000);
+    window.onload = function() {
+        renderMapTree();
+        renderArcanumGrid();
 
-    function goToScreen(screenId) {
+        setTimeout(() => {
+            const loadScreen = document.getElementById('loading-screen');
+            loadScreen.style.transition = 'opacity 0.8s ease';
+            loadScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadScreen.classList.remove('active-screen');
+                document.getElementById('menu-screen').classList.add('active-screen');
+            }, 800);
+        }, 3200);
+    };
+
+    function switchMode(targetScreenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(screenId).classList.add('active-screen');
+        document.getElementById(targetScreenId).classList.add('active-screen');
+
+        document.querySelectorAll('.btn-nav-mode').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (targetScreenId === 'menu-screen') {
+            document.querySelectorAll('.btn-nav-mode:nth-child(1)').forEach(b => b.classList.add('active'));
+        } else if (targetScreenId === 'arcanum-screen') {
+            document.querySelectorAll('.btn-nav-mode:nth-child(2)').forEach(b => b.classList.add('active'));
+        }
     }
 
-    function renderMap() {
-        const treeContainer = document.getElementById('map-tree');
-        treeContainer.innerHTML = "";
+    function renderMapTree() {
+        const container = document.getElementById('map-tree');
+        container.innerHTML = '';
 
-        quests.forEach((quest, index) => {
+        quests.forEach((q, index) => {
             const node = document.createElement('div');
-            node.className = `path-node ${quest.unlocked ? '' : 'locked'}`;
-            node.innerHTML = `${quest.num} <span class="node-label">${quest.name} ${quest.unlocked ? '🔓' : '🔒'}</span>`;
+            node.className = `path-node ${q.unlocked ? '' : 'locked'}`;
             
-            if (quest.unlocked) {
-                node.onclick = () => startQuest(quest.id);
+            if (q.unlocked) {
+                node.innerText = q.num;
+                node.onclick = () => startQuest(q.id);
             } else {
-                node.onclick = () => alert("🔒 Этот зал пока закрыт. Пробудите предыдущий Аркан!");
+                node.innerText = '🔒';
             }
 
-            treeContainer.appendChild(node);
+            const label = document.createElement('div');
+            label.className = 'node-label';
+            label.innerText = q.name;
+            node.appendChild(label);
+
+            container.appendChild(node);
 
             if (index < quests.length - 1) {
-                const separator = document.createElement('div');
-                separator.className = 'node-separator';
-                treeContainer.appendChild(separator);
+                const sep = document.createElement('div');
+                sep.className = 'node-separator';
+                container.appendChild(sep);
             }
         });
     }
 
-    function startQuest(id) {
-        currentLevelId = id;
-        const data = quests.find(q => q.id === id);
+    function renderArcanumGrid() {
+        const grid = document.getElementById('cards-grid-container');
+        grid.innerHTML = '';
 
-        document.getElementById('level-badge').innerText = `${data.num} Аркан`;
-        document.getElementById('level-title').innerText = data.title;
-        document.getElementById('level-text').innerHTML = data.text;
-        
-        // Динамическая подгрузка картинок карт
-        const imgElement = document.getElementById('level-image');
-        if (data.image) {
-            imgElement.src = data.image;
-            imgElement.style.display = "block";
+        arcanumData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'arcanum-card';
+            card.onclick = () => alert(`✨ ${item.num}. ${item.name}\n\n${item.desc}`);
+
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.name;
+            
+            img.onerror = function() {
+                this.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.className = 'arcanum-card-fallback';
+                fallback.innerText = item.num;
+                card.insertBefore(fallback, card.firstChild);
+            };
+
+            card.appendChild(img);
+
+            const title = document.createElement('strong');
+            title.style.fontSize = '13px';
+            title.style.color = '#fff';
+            title.innerText = item.name;
+            card.appendChild(title);
+
+            const tag = document.createElement('div');
+            tag.className = 'arcanum-num-tag';
+            tag.innerText = `Аркан ${item.num}`;
+            card.appendChild(tag);
+
+            grid.appendChild(card);
+        });
+    }
+
+    function startQuest(id) {
+        currentQuestId = id;
+        const q = quests.find(item => item.id === id);
+
+        document.getElementById('level-badge').innerText = `${q.num} Аркан`;
+        document.getElementById('level-title').innerText = q.title;
+        document.getElementById('level-text').innerText = q.text;
+
+        const imgEl = document.getElementById('level-image');
+        if (q.image) {
+            imgEl.src = q.image;
+            imgEl.style.display = 'block';
         } else {
-            imgElement.style.display = "none";
+            imgEl.style.display = 'none';
         }
 
-        const optionsContainer = document.getElementById('options-container');
-        optionsContainer.innerHTML = "";
+        const optionsBox = document.getElementById('options-container');
+        optionsBox.innerHTML = '';
 
-        data.choices.forEach(choice => {
+        q.choices.forEach(c => {
             const btn = document.createElement('button');
             btn.className = 'btn-choice';
-            btn.innerHTML = `<b>${choice.key})</b> ${choice.text}`;
-            btn.onclick = () => handleAnswer(choice);
-            optionsContainer.appendChild(btn);
+            btn.innerText = `${c.key}) ${c.text}`;
+            btn.onclick = () => makeChoice(c, q);
+            optionsBox.appendChild(btn);
         });
 
         goToScreen('game-screen');
     }
 
-    function handleAnswer(choice) {
+    function makeChoice(choice, quest) {
         alert(choice.msg);
 
         if (choice.isCorrect) {
             userXP += 15;
             document.getElementById('xp-count').innerText = userXP;
 
-            const nextLevel = quests.find(q => q.id === currentLevelId + 1);
-            if (nextLevel) {
-                nextLevel.unlocked = true;
-                document.getElementById('cat-menu-text').innerText = `«Впечатляюще, Мастер! Аркан покорился вашей мудрости. На тропе открылся следующий зал...»`;
-            } else {
-                document.getElementById('cat-menu-text').innerText = `«Великолепно! Все залы пройдены, Мастер. Источник полностью Пробужден!»`;
+            const nextId = quest.id + 1;
+            const nextQuest = quests.find(q => q.id === nextId);
+            if (nextQuest) {
+                nextQuest.unlocked = true;
             }
 
-            renderMap();
+            renderMapTree();
             goToScreen('menu-screen');
+
+            const catText = document.getElementById('cat-menu-text');
+            if (nextQuest) {
+                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${nextQuest.num}) теперь открыты!»`;
+            } else {
+                catText.innerText = "«Потрясающе! Все тайны Арканов в этой обители открыты твоей воле!»";
+            }
         }
     }
+
+    function goToScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+        document.getElementById(screenId).classList.add('active-screen');
+    }
 </script>
+
 </body>
-</html>s
+</html>

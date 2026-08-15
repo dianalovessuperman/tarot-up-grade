@@ -674,6 +674,11 @@
         }
     }
 
+    function goToScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+        document.getElementById(screenId).classList.add('active-screen');
+    }
+
     function renderMapTree() {
         const container = document.getElementById('map-tree');
         container.innerHTML = '';
@@ -708,132 +713,102 @@
         const grid = document.getElementById('cards-grid-container');
         grid.innerHTML = '';
 
-        arcanumData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'arcanum-card';
-            card.onclick = () => showCardDetails(item);
+        arcanumData.forEach(card => {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'arcanum-card';
+            cardEl.onclick = () => showArcanumDetails(card);
 
-            const img = document.createElement('img');
-            img.src = item.image;
-            img.alt = item.name;
-            
-            // Если файла карты нет на сервере — выводим фолбэк с цифрой
-            img.onerror = function() {
-                this.onerror = null;
-                this.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='110'><rect width='100%' height='100%' fill='%231d0f2b' stroke='%23e2c974' stroke-width='1'/><text x='50%' y='50%' font-size='18' fill='%23e2c974' text-anchor='middle' dominant-baseline='middle'>${item.num}</text></svg>`;
-            };
+            cardEl.innerHTML = `
+                <img src="${card.image}" alt="${card.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'75\' height=\'110\'><rect width=\'100%\' height=\'100%\' fill=\'%231d0f2b\'/><text x=\'50%\' y=\'50%\' font-size=\'14\' fill=\'%23e2c974\' text-anchor=\'middle\'>🃏</text></svg>'">
+                <strong style="font-size:13px;">${card.name}</strong>
+                <span class="arcanum-num-tag">${card.num} АРКАН</span>
+            `;
 
-            card.appendChild(img);
-
-            const title = document.createElement('strong');
-            title.style.fontSize = '13px';
-            title.style.color = '#fff';
-            title.innerText = item.name;
-            card.appendChild(title);
-
-            const tag = document.createElement('div');
-            tag.className = 'arcanum-num-tag';
-            tag.innerText = `Аркан ${item.num}`;
-            card.appendChild(tag);
-
-            grid.appendChild(card);
+            grid.appendChild(cardEl);
         });
     }
 
-    function showCardDetails(item) {
-        showModal(`${item.num}. ${item.name}`, item.desc, item.image);
-    }
-
     function startQuest(id) {
-        currentQuestId = id;
-        const q = quests.find(item => item.id === id);
+        const quest = quests.find(q => q.id === id);
+        if (!quest || !quest.unlocked) return;
 
-        document.getElementById('level-badge').innerText = `${q.num} Аркан`;
-        document.getElementById('level-title').innerText = q.title;
-        document.getElementById('level-text').innerText = q.text;
+        currentQuestId = id;
+        document.getElementById('level-badge').innerText = quest.num + " Аркан";
+        document.getElementById('level-title').innerText = quest.title;
+        document.getElementById('level-text').innerText = quest.text;
 
         const imgEl = document.getElementById('level-image');
-        imgEl.style.display = 'block';
-        imgEl.src = q.image;
-        imgEl.onerror = function() {
-            this.onerror = null;
-            this.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='130' height='190'><rect width='100%' height='100%' fill='%231d0f2b' stroke='%23e2c974' stroke-width='2'/><text x='50%' y='50%' font-size='28' fill='%23e2c974' text-anchor='middle' dominant-baseline='middle'>${q.num}</text></svg>`;
-        };
+        if (quest.image) {
+            imgEl.src = quest.image;
+            imgEl.style.display = 'block';
+        } else {
+            imgEl.style.display = 'none';
+        }
 
-        const optionsBox = document.getElementById('options-container');
-        optionsBox.innerHTML = '';
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
 
-        q.choices.forEach(c => {
+        quest.choices.forEach(choice => {
             const btn = document.createElement('button');
             btn.className = 'btn-choice';
-            btn.innerText = `${c.key}) ${c.text}`;
-            btn.onclick = () => makeChoice(c, q);
-            optionsBox.appendChild(btn);
+            btn.innerText = choice.text;
+            btn.onclick = () => handleChoice(choice);
+            optionsContainer.appendChild(btn);
         });
 
         goToScreen('game-screen');
     }
 
-    function makeChoice(choice, quest) {
+    function handleChoice(choice) {
+        const quest = quests.find(q => q.id === currentQuestId);
+
         if (choice.isCorrect) {
             userXP += 15;
             document.getElementById('xp-count').innerText = userXP;
 
-            const nextId = quest.id + 1;
-            const nextQuest = quests.find(q => q.id === nextId);
+            const nextQuest = quests.find(q => q.id === currentQuestId + 1);
             if (nextQuest) {
                 nextQuest.unlocked = true;
-                pendingNextQuest = nextQuest;
+                pendingNextQuest = nextQuest.id;
             } else {
                 pendingNextQuest = null;
             }
 
             renderMapTree();
-            showModal("✨ Мудрое решение!", choice.msg, quest.image);
+            showModal("Мудрое решение!", choice.msg, quest.image);
         } else {
             pendingNextQuest = null;
-            showModal("🔮 Тень сомнения", choice.msg, quest.image);
+            showModal("Подумай ещё...", choice.msg, quest.image);
         }
     }
 
-    function showModal(title, text, imageSrc = null) {
-        const modal = document.getElementById('custom-modal');
+    function showArcanumDetails(card) {
+        showModal(`${card.num} Аркан: ${card.name}`, card.desc, card.image);
+    }
+
+    function showModal(title, text, imageSrc = '') {
         document.getElementById('modal-title').innerText = title;
         document.getElementById('modal-text').innerText = text;
 
         const imgEl = document.getElementById('modal-image');
         if (imageSrc) {
-            imgEl.style.display = 'inline-block';
             imgEl.src = imageSrc;
-            imgEl.onerror = function() { this.style.display = 'none'; };
+            imgEl.style.display = 'inline-block';
         } else {
             imgEl.style.display = 'none';
         }
 
-        modal.style.display = 'flex';
+        document.getElementById('custom-modal').style.display = 'flex';
     }
 
     function closeModal() {
         document.getElementById('custom-modal').style.display = 'none';
-
-        if (document.getElementById('game-screen').classList.contains('active-screen')) {
-            const quest = quests.find(q => q.id === currentQuestId);
+        if (pendingNextQuest !== null) {
+            const nextId = pendingNextQuest;
+            pendingNextQuest = null;
             goToScreen('menu-screen');
-
-            const catText = document.getElementById('cat-menu-text');
-            if (pendingNextQuest) {
-                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${pendingNextQuest.num}) открыты!»`;
-            } else if (quest && quest.id === quests.length - 1) {
-                catText.innerText = "«Потрясающе! Все тайны Арканов в этой обители открыты твоей воле!»";
-            }
         }
     }
-
-    function goToScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(screenId).classList.add('active-screen');
-    }
 </script>
-
 </body>
 </html>

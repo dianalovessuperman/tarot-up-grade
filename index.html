@@ -23,14 +23,12 @@
             overflow-x: hidden;
         }
 
+        /* Легкий фон на чистом CSS вместо тяжелых картинок */
         .phone-container {
             width: 100%;
             max-width: 430px;
             min-height: 92vh;
-            background-image: url('fon.png'); 
-            background-size: cover;
-            background-position: center;
-            background-color: var(--bg-dark); 
+            background: radial-gradient(circle at 50% 20%, #25123e 0%, #0d0614 80%);
             border-radius: 30px;
             padding: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(226, 201, 116, 0.15);
@@ -39,13 +37,14 @@
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
+            border: 1px solid rgba(226, 201, 116, 0.2);
         }
 
         .phone-container::before {
             content: '';
             position: absolute;
             top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(98, 0, 234, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 60%);
             animation: drift 12s linear infinite;
             pointer-events: none;
             z-index: 1;
@@ -121,70 +120,76 @@
             border: 1px solid rgba(226, 201, 116, 0.2);
             margin-bottom: 20px;
             line-height: 1.6;
-            animation: gentleSway 4s ease-in-out infinite alternate;
         }
 
-        .card-visual {
-            max-width: 140px;
-            width: 100%;
-            height: auto;
-            display: block;
+        .card-placeholder {
+            width: 100px;
+            height: 140px;
             margin: 0 auto 15px auto;
             border-radius: 12px;
             border: 2px solid var(--gold-glow);
+            background: radial-gradient(circle, rgba(43, 24, 61, 0.9) 0%, rgba(13, 6, 20, 0.95) 100%);
             box-shadow: 0 0 20px rgba(226, 201, 116, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--gold-glow);
         }
 
         .btn-choice {
             background: linear-gradient(135deg, rgba(43, 24, 61, 0.85) 0%, rgba(22, 11, 31, 0.95) 100%);
             color: #f5f0fa;
             border: 1px solid rgba(226, 201, 116, 0.35);
-            padding: 16px 20px;
-            font-size: 15px;
+            padding: 14px 18px;
+            font-size: 14px;
             font-family: 'Georgia', serif;
             border-radius: 14px;
             cursor: pointer;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             text-align: left;
             transition: all 0.3s ease;
             width: 100%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(226, 201, 116, 0.05);
-            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
         .btn-choice:hover {
             background: linear-gradient(135deg, rgba(62, 33, 89, 0.9) 0%, rgba(33, 16, 48, 0.95) 100%);
             border-color: #e2c974;
-            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4);
             transform: translateY(-2px);
         }
 
         .cat-instructor-box {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             background: rgba(13, 6, 20, 0.7);
-            padding: 15px;
-            border-radius: 20px;
+            padding: 12px;
+            border-radius: 18px;
             margin-bottom: 15px;
             border: 1px solid rgba(226, 201, 116, 0.15);
         }
 
-        .cat-avatar {
-            width: 65px;
-            height: auto;
-            border-radius: 12px;
+        .cat-avatar-css {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #3e2159 0%, #160b1f 100%);
             border: 1px solid var(--gold-glow);
-            box-shadow: 0 0 15px rgba(226, 201, 116, 0.3);
-            animation: catBreathe 3s ease-in-out infinite alternate; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 10px rgba(226, 201, 116, 0.3);
         }
 
         .cat-bubble {
             background: rgba(255,255,255,0.07);
-            padding: 10px 14px;
-            border-radius: 14px;
+            padding: 8px 12px;
+            border-radius: 12px;
             font-size: 13px;
             font-style: italic;
             flex-grow: 1;
@@ -202,8 +207,8 @@
         }
 
         .path-node {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             background: radial-gradient(circle, #25123e 0%, #0d0614 100%);
             color: var(--gold-glow);
@@ -211,20 +216,19 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             border: 2px solid rgba(226, 201, 116, 0.4);
-            box-shadow: 0 0 20px rgba(226, 201, 116, 0.25), inset 0 0 15px rgba(226, 201, 116, 0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(226, 201, 116, 0.2);
+            transition: all 0.3s;
             position: relative;
         }
 
         .path-node:not(.locked):hover {
-            transform: scale(1.15);
+            transform: scale(1.1);
             border-color: var(--gold-glow);
             color: #ffffff;
-            text-shadow: 0 0 8px var(--gold-glow);
-            box-shadow: 0 0 30px rgba(226, 201, 116, 0.6), inset 0 0 10px rgba(226, 201, 116, 0.3);
+            box-shadow: 0 0 25px rgba(226, 201, 116, 0.5);
         }
 
         .path-node.locked {
@@ -239,18 +243,16 @@
             position: absolute;
             width: 180px;
             text-align: center;
-            bottom: -28px;
-            font-size: 13px;
+            bottom: -25px;
+            font-size: 12px;
             font-family: 'Georgia', serif;
             color: var(--text-light);
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
             opacity: 0.85;
-            transition: opacity 0.3s;
         }
 
         .node-separator {
             width: 2px;
-            height: 25px;
+            height: 20px;
             background: rgba(226, 201, 116, 0.3);
         }
 
@@ -282,28 +284,19 @@
             box-shadow: 0 0 15px rgba(226, 201, 116, 0.25);
         }
 
-        .arcanum-card img {
-            width: 75px;
-            height: 110px;
-            object-fit: cover;
+        .arcanum-card-icon {
+            width: 70px;
+            height: 100px;
             border-radius: 8px;
             margin-bottom: 8px;
-            border: 1px solid rgba(226, 201, 116, 0.3);
-        }
-
-        .arcanum-card-fallback {
-            width: 75px;
-            height: 110px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border: 1px dashed rgba(226, 201, 116, 0.4);
+            border: 1px solid rgba(226, 201, 116, 0.4);
             background: rgba(13, 6, 20, 0.8);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             color: var(--gold-glow);
-            font-weight: bold;
         }
 
         .arcanum-num-tag {
@@ -313,11 +306,11 @@
             margin-top: 3px;
         }
 
-        /* --- СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (MODAL) --- */
+        /* MODAL */
         .modal-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(8, 3, 13, 0.85);
+            background: rgba(8, 3, 13, 0.88);
             backdrop-filter: blur(8px);
             z-index: 100;
             display: none;
@@ -325,7 +318,6 @@
             align-items: center;
             padding: 20px;
             box-sizing: border-box;
-            animation: fadeIn 0.3s ease;
         }
 
         .modal-card {
@@ -335,28 +327,14 @@
             padding: 22px;
             width: 100%;
             max-width: 350px;
-            box-shadow: 0 0 30px rgba(226, 201, 116, 0.3), inset 0 0 15px rgba(226, 201, 116, 0.1);
+            box-shadow: 0 0 30px rgba(226, 201, 116, 0.3);
             text-align: center;
-            position: relative;
-            transform: scale(0.95);
-            animation: popUp 0.3s forwards ease-out;
-        }
-
-        .modal-card img.modal-img {
-            max-width: 110px;
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            border: 1.5px solid var(--gold-glow);
-            margin-bottom: 12px;
-            box-shadow: 0 0 15px rgba(226, 201, 116, 0.2);
         }
 
         .modal-title {
             color: var(--gold-glow);
             font-size: 18px;
             margin: 0 0 10px 0;
-            letter-spacing: 0.5px;
         }
 
         .modal-text {
@@ -376,51 +354,33 @@
             font-size: 14px;
             cursor: pointer;
             width: 100%;
-            transition: all 0.3s;
         }
 
-        .btn-modal-close:hover {
-            background: rgba(226, 201, 116, 0.3);
-            box-shadow: 0 0 15px rgba(226, 201, 116, 0.4);
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes gentleSway { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
-        @keyframes catBreathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
-
-        .big-cat-entrance {
-            animation: fadeInSpawn 2s ease-out forwards;
-            text-align: center;
-        }
-        @keyframes fadeInSpawn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
 <div class="phone-container">
 
-    <!-- ВСПЛЫВАЮЩЕЕ ОКНО (MODAL) ДЛЯ УВЕДОМЛЕНИЙ И КАРТ -->
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-card">
-            <img id="modal-image" class="modal-img" src="" alt="Аркан" onerror="this.style.display='none'">
+            <div id="modal-icon" style="font-size: 40px; margin-bottom: 10px;">🔮</div>
             <h3 id="modal-title" class="modal-title">Заголовок</h3>
-            <div id="modal-text" class="modal-text">Текст описания...</div>
+            <div id="modal-text" class="modal-text">Текст...</div>
             <button class="btn-modal-close" onclick="closeModal()">Продолжить</button>
         </div>
     </div>
 
-    <!-- ЭКРАН 1: ПРОБУЖДЕНИЕ (ЗАГРУЗКА) -->
-    <div id="loading-screen" class="screen active-screen" style="justify-content: center; align-items: center;">
-        <div class="big-cat-entrance">
-            <img src="cat.png" style="max-width: 220px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 30px rgba(226,201,116,0.4);" alt="Хранитель" onerror="this.style.display='none'">
-            <h2 style="color: var(--gold-glow); margin-top:20px; text-shadow: 0 4px 10px #000;">Приветствую, Мастер</h2>
-            <p style="font-style: italic; text-shadow: 0 2px 5px #000;">«Твой Источник спал слишком долго. Пора пробудить память древних карт... Я укажу дорогу».</p>
-        </div>
+    <!-- ЭКРАН 1: БЫСТРЫЙ СТАРТ (0.6 секунды вместо 3.2 сек) -->
+    <div id="loading-screen" class="screen active-screen" style="justify-content: center; align-items: center; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--gold-glow));">🐱‍⬛</div>
+        <h2 style="color: var(--gold-glow); margin-top:10px;">Приветствую, Мастер</h2>
+        <p style="font-style: italic; max-width: 280px; font-size: 14px; color: rgba(245, 240, 250, 0.8);">«Твой Источник пробуждается. Я укажу тебе дорогу к древним арканам...»</p>
     </div>
 
-    <!-- ЭКРАН 2: КАРТА АРКАНОВ (КВЕСТЫ) -->
+    <!-- ЭКРАН 2: КАРТА ИСПЫТАНИЙ -->
     <div id="menu-screen" class="screen">
         <div class="top-bar">
             <div class="stat-badge">🔮 Мастер Арканов</div>
@@ -433,9 +393,9 @@
         </div>
         
         <div class="cat-instructor-box">
-            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
+            <div class="cat-avatar-css">🐱‍⬛</div>
             <div class="cat-bubble" id="cat-menu-text">
-                «Мастер, Храм Судеб открыт перед тобой. С какого Аркана начнём наше вспоминание?»
+                «Мастер, Храм Судеб открыт. С какого Аркана начнём наше вспоминание?»
             </div>
         </div>
 
@@ -455,9 +415,9 @@
         </div>
 
         <div class="cat-instructor-box">
-            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.style.display='none'">
+            <div class="cat-avatar-css">🐱‍⬛</div>
             <div class="cat-bubble">
-                «Перед тобой карты нашего храма. Нажми на любую, чтобы изучить её тайный архетип!»
+                «Перед тобой карты нашего храма. Выбери любую, чтобы изучить её тайный архетип!»
             </div>
         </div>
 
@@ -472,9 +432,9 @@
         </div>
 
         <div class="mystic-panel">
-            <img id="level-image" src="" class="card-visual" alt="Карта Аркана" onerror="this.style.display='none'">
+            <div class="card-placeholder" id="level-icon-box">⚡</div>
             <h4 style="margin-top: 0; color: var(--gold-glow); letter-spacing: 1px;" id="level-title">Запрос Силы</h4>
-            <p style="margin-bottom: 0; font-size: 15px;" id="level-text">Текст вопроса...</p>
+            <p style="margin-bottom: 0; font-size: 14px;" id="level-text">Текст вопроса...</p>
         </div>
 
         <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: flex-end;" id="options-container"></div>
@@ -489,7 +449,7 @@
             num: "XVI",
             name: "Башня: Крах Иллюзий",
             title: "Запрос Силы: Разрушение Башни",
-            image: "tower.png", 
+            icon: "⚡", 
             unlocked: true,
             text: "К твоему алтарю обратилась женщина. Её многолетний семейный союз сгорел за один день из-за предательства. Она раздавлена. Что ты передашь её душе?",
             choices: [
@@ -503,7 +463,7 @@
             num: "VI",
             name: "Влюбленные: Выбор",
             title: "Запрос Силы: Выбор Влюбленных",
-            image: "love.png", 
+            icon: "💖", 
             unlocked: false,
             text: "Перед тобой женщина 35 лет. У нее престижная должность в банке, но душа увядает. Её мечта — открыть студию флористики. Она боится потерять стабильность. В чем урок Аркана?",
             choices: [
@@ -517,7 +477,7 @@
             num: "VII",
             name: "Колесница: Воля",
             title: "Запрос Силы: Триумф Колесницы",
-            image: "chariot.png",
+            icon: "🏛️",
             unlocked: false,
             text: "Молодой руководитель выгорел дотла: он пашет 24/7 ради кресла директора, жестко прессует команду и требует идеальности, но проект буксует из-за срывов подчиненных. В чём его ошибка?",
             choices: [
@@ -531,7 +491,7 @@
             num: "0",
             name: "Дурак: Прыжок веры",
             title: "Запрос Силы: Обнуление Дурака",
-            image: "fool.png",
+            icon: "🃏",
             unlocked: false,
             text: "Успешный топ-менеджер мечтает бросить душную корпорацию ради своего дела с нуля, но его парализует страх потерять статус, уважение коллег и остаться «никем». Чему его научит Дурак?",
             choices: [
@@ -545,7 +505,7 @@
             num: "XVIII",
             name: "Луна: Тайны Тени",
             title: "Запрос Силы: Сумерки Луны",
-            image: "moon.png",
+            icon: "🌙",
             unlocked: false,
             text: "Мужчина с виду успешен, но внутри него глубокий кризис смыслов и глухая тревога. Он боится показаться слабым и глушит это экстримом и алкоголем. Как ему пройти этот туман?",
             choices: [
@@ -557,14 +517,14 @@
     ];
 
     const arcanumData = [
-        { num: "0", name: "Дурак", image: "fool.png", desc: "Аркан начала, доверия Вселенной и чистого листа. Символизирует смелость совершить шаг в неизвестное без страха перед ошибкой." },
-        { num: "IV", name: "Император", image: "emperor.png", desc: "Аркан структуры, дисциплины, власти и ответственности. Учит управлять хаосом и создавать нерушимую основу для своих идей." },
-        { num: "VI", name: "Влюбленные", image: "love.png", desc: "Аркан выбора сердца, дуальности и искренней гармонии. Напоминает, что истинный выбор всегда делается из любви, а не из страха." },
-        { num: "VII", name: "Колесница", image: "chariot.png", desc: "Аркан триумфа воли и укрощения противоположностей. Дарует умение управлять своими эмоциями и уверенно вести жизнь к цели." },
-        { num: "VIII", name: "Сила", image: "strength.png", desc: "Аркан мягкой душевной стойкости и укрощения страстей. Показывает, что истинная сила кроется в милосердии и принятии, а не в агрессии." },
-        { num: "IX", name: "Отшельник", image: "hermit.png", desc: "Аркан глубокой мудрости и поисков внутреннего света. Призывает замедлиться, услышать тишину духа и найти ответы внутри себя." },
-        { num: "XVI", name: "Башня", image: "tower.png", desc: "Аркан крушения ложных иллюзий и освобождения. Разрушает то, что отжило, ради постройки нового, искреннего фундамента." },
-        { num: "XVIII", name: "Луна", image: "moon.png", desc: "Аркан подсознания, тайных страхов и тонкой интуиции. Учит проходить сквозь туман неизвестности и принимать свою Тень." }
+        { num: "0", name: "Дурак", icon: "🃏", desc: "Аркан начала, доверия Вселенной и чистого листа. Символизирует смелость совершить шаг в неизвестное без страха перед ошибкой." },
+        { num: "IV", name: "Император", icon: "👑", desc: "Аркан структуры, дисциплины, власти и ответственности. Учит управлять хаосом и создавать нерушимую основу для своих идей." },
+        { num: "VI", name: "Влюбленные", icon: "💖", desc: "Аркан выбора сердца, дуальности и искренней гармонии. Напоминает, что истинный выбор всегда делается из любви, а не из страха." },
+        { num: "VII", name: "Колесница", icon: "🏛️", desc: "Аркан триумфа воли и укрощения противоположностей. Дарует умение управлять своими эмоциями и уверенно вести жизнь к цели." },
+        { num: "VIII", name: "Сила", icon: "🦁", desc: "Аркан мягкой душевной стойкости и укрощения страстей. Показывает, что истинная сила кроется в милосердии и принятии, а не в агрессии." },
+        { num: "IX", name: "Отшельник", icon: "🕯️", desc: "Аркан глубокой мудрости и поисков внутреннего света. Призывает замедлиться, услышать тишину духа и найти ответы внутри себя." },
+        { num: "XVI", name: "Башня", icon: "⚡", desc: "Аркан крушения ложных иллюзий и освобождения. Разрушает то, что отжило, ради постройки нового, искреннего фундамента." },
+        { num: "XVIII", name: "Луна", icon: "🌙", desc: "Аркан подсознания, тайных страхов и тонкой интуиции. Учит проходить сквозь туман неизвестности и принимать свою Тень." }
     ];
 
     let userXP = 0;
@@ -575,24 +535,23 @@
         renderMapTree();
         renderArcanumGrid();
 
+        // Задержка загрузки сокращена до 600мс для мгновенного входа
         setTimeout(() => {
             const loadScreen = document.getElementById('loading-screen');
-            loadScreen.style.transition = 'opacity 0.8s ease';
+            loadScreen.style.transition = 'opacity 0.4s ease';
             loadScreen.style.opacity = '0';
             setTimeout(() => {
                 loadScreen.classList.remove('active-screen');
                 document.getElementById('menu-screen').classList.add('active-screen');
-            }, 800);
-        }, 3200);
+            }, 400);
+        }, 600);
     };
 
     function switchMode(targetScreenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
         document.getElementById(targetScreenId).classList.add('active-screen');
 
-        document.querySelectorAll('.btn-nav-mode').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        document.querySelectorAll('.btn-nav-mode').forEach(btn => btn.classList.remove('active'));
         
         if (targetScreenId === 'menu-screen') {
             document.querySelectorAll('.btn-nav-mode:nth-child(1)').forEach(b => b.classList.add('active'));
@@ -640,19 +599,10 @@
             card.className = 'arcanum-card';
             card.onclick = () => showCardDetails(item);
 
-            const img = document.createElement('img');
-            img.src = item.image;
-            img.alt = item.name;
-            
-            img.onerror = function() {
-                this.style.display = 'none';
-                const fallback = document.createElement('div');
-                fallback.className = 'arcanum-card-fallback';
-                fallback.innerText = item.num;
-                card.insertBefore(fallback, card.firstChild);
-            };
-
-            card.appendChild(img);
+            const iconBox = document.createElement('div');
+            iconBox.className = 'arcanum-card-icon';
+            iconBox.innerText = item.icon;
+            card.appendChild(iconBox);
 
             const title = document.createElement('strong');
             title.style.fontSize = '13px';
@@ -670,7 +620,7 @@
     }
 
     function showCardDetails(item) {
-        showModal(`${item.num}. ${item.name}`, item.desc, item.image);
+        showModal(`${item.num}. ${item.name}`, item.desc, item.icon);
     }
 
     function startQuest(id) {
@@ -680,14 +630,7 @@
         document.getElementById('level-badge').innerText = `${q.num} Аркан`;
         document.getElementById('level-title').innerText = q.title;
         document.getElementById('level-text').innerText = q.text;
-
-        const imgEl = document.getElementById('level-image');
-        if (q.image) {
-            imgEl.src = q.image;
-            imgEl.style.display = 'block';
-        } else {
-            imgEl.style.display = 'none';
-        }
+        document.getElementById('level-icon-box').innerText = q.icon;
 
         const optionsBox = document.getElementById('options-container');
         optionsBox.innerHTML = '';
@@ -718,35 +661,24 @@
             }
 
             renderMapTree();
-            showModal("✨ Мудрое решение!", choice.msg, quest.image, true);
+            showModal("✨ Мудрое решение!", choice.msg, quest.icon);
         } else {
             pendingNextQuest = null;
-            showModal("🔮 Тень сомнения", choice.msg, quest.image, false);
+            showModal("🔮 Тень сомнения", choice.msg, "⚠️");
         }
     }
 
-    function showModal(title, text, imageSrc = null, isSuccess = true) {
+    function showModal(title, text, icon = "🔮") {
         const modal = document.getElementById('custom-modal');
-        const titleEl = document.getElementById('modal-title');
-        const textEl = document.getElementById('modal-text');
-        const imgEl = document.getElementById('modal-image');
-
-        titleEl.innerText = title;
-        textEl.innerText = text;
-
-        if (imageSrc) {
-            imgEl.src = imageSrc;
-            imgEl.style.display = 'inline-block';
-        } else {
-            imgEl.style.display = 'none';
-        }
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-text').innerText = text;
+        document.getElementById('modal-icon').innerText = icon;
 
         modal.style.display = 'flex';
     }
 
     function closeModal() {
-        const modal = document.getElementById('custom-modal');
-        modal.style.display = 'none';
+        document.getElementById('custom-modal').style.display = 'none';
 
         if (document.getElementById('game-screen').classList.contains('active-screen')) {
             const quest = quests.find(q => q.id === currentQuestId);
@@ -754,7 +686,7 @@
 
             const catText = document.getElementById('cat-menu-text');
             if (pendingNextQuest) {
-                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${pendingNextQuest.num}) теперь открыты!»`;
+                catText.innerText = `«Превосходно! Ты пробудил(а) ${quest.num} Аркан. Следующие врата (${pendingNextQuest.num}) открыты!»`;
             } else if (quest && quest.id === quests.length - 1) {
                 catText.innerText = "«Потрясающе! Все тайны Арканов в этой обители открыты твоей воле!»";
             }

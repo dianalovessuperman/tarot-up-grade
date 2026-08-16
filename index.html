@@ -386,7 +386,7 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 1: СТАРТ (Пропускается по клику или за 1 сек) -->
+    <!-- ЭКРАН 1: СТАРТ -->
     <div id="loading-screen" class="screen active-screen" onclick="skipIntro()" style="justify-content: center; align-items: center; text-align: center; cursor: pointer;">
         <img src="cat.png" style="max-width: 180px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 25px rgba(226,201,116,0.3);" alt="Хранитель" onerror="this.style.display='none'">
         <h2 style="color: var(--gold-glow); margin-top:15px;">Приветствую, Мастер</h2>
@@ -400,7 +400,7 @@
             <div class="stat-badge"> Мастер Арканов</div>
             <div class="stat-badge"> Сила: <span id="xp-count">0</span></div>
             <button onclick="showRewardAd()" class="stat-badge" style="background: rgba(226, 201, 116, 0.2); color: #e2c974; cursor: pointer; border: 1px solid #e2c974;">
-                📺 +30 Силы
+                 +30 Силы
             </button>
         </div>
 
@@ -530,7 +530,8 @@
                 { key: "B", text: "Посмотреть вглубь себя, честно признать свой кризис и пройти сквозь страх, чтобы найти новые истинные смыслы.", isCorrect: true, msg: " Ошеломительно, Мастер! Пройти сквозь Луну для мужчины — это приручить своих внутренних волков и забрать силу своей Теневой стороны. +15 к Силе!" },
                 { key: "C", text: "Попытаться кардинально сменить обстановку: бросить семью или улететь на острова.", isCorrect: false, msg: " Бегство от себя не поможет. Куда бы ты ни поехал, твоя Луна последует за тобой." }
             ]
-        },{
+        },
+        {
             id: 5,
             num: "IX",
             name: "Отшельник: Свет Мудрости",
@@ -644,28 +645,112 @@
     let currentQuestId = 0;
     let pendingNextQuest = null;
     let autoStartTimer;
+    let AdController = null;
 
-    // Инициализация Adsgram с твоим Block ID (UnitID: 43009)
-    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "43009" }) : null;
+    // Инициализация Telegram API
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    }
+
+    // Инициализация Adsgram
+    function initAdsgram() {
+        if (window.Adsgram) {
+            AdController = window.Adsgram.init({ blockId: "43009" });
+        }
+    }
+
+    // Сохранение прогресса игрока в Telegram CloudStorage и LocalStorage
+    function saveProgress() {
+        const unlockedQuestIds = quests.filter(q => q.unlocked).map(q => q.id);
+        const data = {
+            userXP: userXP,
+            unlockedQuests: unlockedQuestIds
+        };
+
+        const jsonStr = JSON.stringify(data);
+
+        // Резервное сохранение в браузер
+        localStorage.setItem('arcanum_game_data', jsonStr);
+
+        // Сохранение в облако Telegram
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.CloudStorage) {
+            window.Telegram.WebApp.CloudStorage.setItem('arcanum_game_data', jsonStr, (err, success) => {
+                if (err) console.log("Ошибка сохранения в CloudStorage:", err);
+            });
+        }
+    }
+
+    // Загрузка прогресса игрока
+    function loadProgress(callback) {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.CloudStorage) {
+            window.Telegram.WebApp.CloudStorage.getItem('arcanum_game_data', (err, value) => {
+                let rawData = value;
+                if (!rawData) {
+                    rawData = localStorage.getItem('arcanum_game_data');
+                }
+                applyData(rawData);
+                if (callback) callback();
+            });
+        } else {
+            let rawData = localStorage.getItem('arcanum_game_data');
+            applyData(rawData);
+            if (callback) callback();
+        }
+    }
+
+    function applyData(rawData) {
+        if (!rawData) return;
+        try {
+            const data = JSON.parse(rawData);
+            if (data.userXP !== undefined) {
+                userXP = data.userXP;
+                document.getElementById('xp-count').innerText = userXP;
+            }
+            if (data.unlockedQuests && Array.isArray(data.unlockedQuests)) {
+                quests.forEach(q => {
+                    if (data.unlockedQuests.includes(q.id)) {
+                        q.unlocked = true;
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Ошибка чтения прогресса:", e);
+        }
+    }
 
     function showRewardAd() {
         if (!AdController) {
-            showModal("Реклама", "В обычном браузере реклама недоступна. Откройте приложение через Telegram на смартфоне.");
+            initAdsgram();
+        }
+
+        const isTelegramNative = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
+
+        if (!AdController || !isTelegramNative) {
+            showModal("Реклама", "Запустите приложение внутри Telegram на смартфоне через бот (Menu Button).");
             return;
         }
 
         AdController.show().then((result) => {
             userXP += 30;
             document.getElementById('xp-count').innerText = userXP;
+            saveProgress();
             showModal("Награда получена!", "Вы получили +30 к Силе Источника!");
-        }).catch((result) => {
-            showModal("Увы", "Рекламный ролик не был досмотрен до конца.");
+        }).catch((error) => {
+            let errorMsg = "Рекламный ролик не был досмотрен.";
+            if (error && error.description) {
+                errorMsg += " (" + error.description + ")";
+            }
+            showModal("Информация", errorMsg);
         });
     }
 
     window.onload = function() {
-        renderMapTree();
-        renderArcanumGrid();
+        initAdsgram();
+        loadProgress(() => {
+            renderMapTree();
+            renderArcanumGrid();
+        });
         autoStartTimer = setTimeout(skipIntro, 1200);
     };
 
@@ -795,6 +880,7 @@
                 pendingNextQuest = null;
             }
 
+            saveProgress();
             renderMapTree();
             showModal("Мудрое решение!", choice.msg, quest.image);
         } else {

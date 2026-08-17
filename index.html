@@ -653,10 +653,14 @@
         window.Telegram.WebApp.expand();
     }
 
-    // Инициализация Adsgram
+    // Инициализация Adsgram с новым UnitID и debug-режимом
     function initAdsgram() {
         if (window.Adsgram) {
-            AdController = window.Adsgram.init({ blockId: "43184" });
+            try {
+                AdController = window.Adsgram.init({ blockId: "43184", debug: true });
+            } catch (e) {
+                console.error("Adsgram init error:", e);
+            }
         }
     }
 
@@ -719,15 +723,14 @@
         }
     }
 
+    // Вызов показа рекламы
     function showRewardAd() {
         if (!AdController) {
             initAdsgram();
         }
 
-        const isTelegramNative = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
-
-        if (!AdController || !isTelegramNative) {
-            showModal("Реклама", "Запустите приложение внутри Telegram на смартфоне через бот (Menu Button).");
+        if (!AdController) {
+            showModal("Информация", "Рекламный модуль ещё загружается. Перезапустите страницу или попробуйте чуть позже.");
             return;
         }
 
@@ -737,7 +740,7 @@
             saveProgress();
             showModal("Награда получена!", "Вы получили +30 к Силе Источника!");
         }).catch((error) => {
-            let errorMsg = "Рекламный ролик не был досмотрен.";
+            let errorMsg = "Рекламное видео пока недоступно или просмотр не был завершен.";
             if (error && error.description) {
                 errorMsg += " (" + error.description + ")";
             }

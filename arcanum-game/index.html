@@ -5,10 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Обитель Арканов: Пробуждение Источника</title>
 
-    <!-- Скрипты платформ -->
+    <!-- Безопасная заглушка для CloudStorage в старых версиях Telegram -->
+    <script>
+      window.Telegram = window.Telegram || {};
+      window.Telegram.WebApp = window.Telegram.WebApp || {};
+      if (!window.Telegram.WebApp.CloudStorage) {
+        window.Telegram.WebApp.CloudStorage = {
+          getItem: function(key, callback) { if(callback) callback(null, null); },
+          setItem: function(key, val, callback) { if(callback) callback(null); }
+        };
+      }
+    </script>
+
+    <!-- Скрипт Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdndeliver.net/adsgram/adsgram-ad.js"></script>
     
+    <!-- Официальный рабочий скрипт Adsgram -->
+    <script src="https://sad.adsgram.ai/js/sad-async.js"></script>
+
     <!-- Предзагрузка ресурсов -->
     <link rel="preload" as="image" href="fon.png">
     <link rel="preload" as="image" href="cat.png">
@@ -41,16 +55,16 @@
     <!-- ЭКРАН 2: КАРТА ИСПЫТАНИЙ -->
     <div id="menu-screen" class="screen">
         <div class="top-bar">
-            <div class="stat-badge"> Мастер Арканов</div>
-            <div class="stat-badge"> Сила: <span id="xp-count">0</span></div>
+            <div class="stat-badge">Мастер Арканов</div>
+            <div class="stat-badge">Сила: <span id="xp-count">0</span></div>
             <button onclick="showRewardAd()" class="stat-badge" style="background: rgba(226, 201, 116, 0.2); color: #e2c974; cursor: pointer; border: 1px solid #e2c974;">
                  +30 Силы
             </button>
         </div>
 
         <div class="mode-nav">
-            <button class="btn-nav-mode active" onclick="switchMode('menu-screen')"> Испытания</button>
-            <button class="btn-nav-mode" onclick="switchMode('arcanum-screen')"> Книга Арканов</button>
+            <button class="btn-nav-mode active" onclick="switchMode('menu-screen')">Испытания</button>
+            <button class="btn-nav-mode" onclick="switchMode('arcanum-screen')">Книга Арканов</button>
         </div>
         
         <div class="cat-instructor-box">
@@ -66,13 +80,13 @@
     <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ -->
     <div id="arcanum-screen" class="screen">
         <div class="top-bar">
-            <div class="stat-badge"> Справочник</div>
+            <div class="stat-badge">Справочник</div>
             <div class="stat-badge">Старшие Арканы</div>
         </div>
 
         <div class="mode-nav">
-            <button class="btn-nav-mode" onclick="switchMode('menu-screen')"> Испытания</button>
-            <button class="btn-nav-mode active" onclick="switchMode('arcanum-screen')"> Книга Арканов</button>
+            <button class="btn-nav-mode" onclick="switchMode('menu-screen')">Испытания</button>
+            <button class="btn-nav-mode active" onclick="switchMode('arcanum-screen')">Книга Арканов</button>
         </div>
 
         <div class="cat-instructor-box">
@@ -88,7 +102,7 @@
     <!-- ЭКРАН 3: УНИВЕРСАЛЬНЫЙ ЗАЛ ИСПЫТАНИЙ -->
     <div id="game-screen" class="screen">
         <div class="top-bar">
-            <button onclick="goToScreen('menu-screen')" style="background: transparent; color: var(--gold-glow); border: none; cursor: pointer; font-size: 15px;"> В обитель</button>
+            <button onclick="goToScreen('menu-screen')" style="background: transparent; color: var(--gold-glow); border: none; cursor: pointer; font-size: 15px;">В обитель</button>
             <div class="stat-badge" id="level-badge">XVI Аркан</div>
         </div>
 

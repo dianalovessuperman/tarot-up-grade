@@ -1,13 +1,17 @@
 let userXP = 0;
 let currentQuestId = 0;
 let pendingNextQuest = null;
-let autoStartTimer;
+let autoStartTimer = null;
 let AdController = null;
 
 // Инициализация Telegram API
 if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
+    try {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    } catch (e) {
+        console.warn("Telegram WebApp initialization bypassed:", e);
+    }
 }
 
 // Инициализация Adsgram
@@ -30,12 +34,18 @@ function saveProgress() {
     };
     const jsonStr = JSON.stringify(data);
 
-    // Всегда сохраняем в локальное хранилище браузера
-    localStorage.setItem('arcanum_game_data', jsonStr);
-
-    // Сохраняем в Telegram CloudStorage ТОЛЬКО если версия API >= 6.9
+    // Сохраняем в локальное хранилище браузера
     try {
-        if (window.Telegram?.WebApp?.isVersionAtLeast && window.Telegram.WebApp.isVersionAtLeast('6.9')) {
+        localStorage.setItem('arcanum_game_data', jsonStr);
+    } catch (e) {
+        console.warn("Ошибка записи в localStorage:", e);
+    }
+
+    // Сохраняем в Telegram CloudStorage ТОЛЬКО если API действительно поддерживает метод
+    try {
+        if (window.Telegram?.WebApp?.isVersionAtLeast && 
+            window.Telegram.WebApp.isVersionAtLeast('6.9') && 
+            window.Telegram.WebApp.CloudStorage) {
             window.Telegram.WebApp.CloudStorage.setItem('arcanum_game_data', jsonStr);
         }
     } catch (e) {
@@ -45,25 +55,17 @@ function saveProgress() {
 
 // Безопасная загрузка прогресса
 function loadProgress(callback) {
-    let loaded = false;
-
+    let rawData = null;
     try {
-        if (window.Telegram?.WebApp?.isVersionAtLeast && window.Telegram.WebApp.isVersionAtLeast('6.9')) {
-            window.Telegram.WebApp.CloudStorage.getItem('arcanum_game_data', (err, value) => {
-                let rawData = value || localStorage.getItem('arcanum_game_data');
-                applyData(rawData);
-                if (callback) callback();
-            });
-            loaded = true;
-        }
+        rawData = localStorage.getItem('arcanum_game_data');
     } catch (e) {
-        console.warn("Ошибка CloudStorage, переходим на localStorage:", e);
+        console.warn("Ошибка чтения localStorage:", e);
     }
 
-    if (!loaded) {
-        let rawData = localStorage.getItem('arcanum_game_data');
-        applyData(rawData);
-        if (callback) callback();
+    applyData(rawData);
+
+    if (callback) {
+        callback();
     }
 }
 
@@ -101,7 +103,8 @@ function showRewardAd() {
 
     AdController.show().then((result) => {
         userXP += 30;
-        document.getElementById('xp-count').innerText = userXP;
+        const xpEl = document.getElementById('xp-count');
+        if (xpEl) xpEl.innerText = userXP;
         saveProgress();
         showModal("Награда получена!", "Вы получили +30 к Силе Источника!");
     }).catch((error) => {
@@ -113,20 +116,21 @@ function showRewardAd() {
     });
 }
 
+function skipIntro() {
+    if (autoStartTimer) clearTimeout(autoStartTimer);
+    switchMode('menu-screen');
+}
+
 window.onload = function() {
     initAdsgram();
     
-    // Загружаем данные
-    try {
-        loadProgress(() => {
-            renderMapTree();
-            renderArcanumGrid();
-        });
-    } catch(e) {
-        console.error("Ошибка при загрузке прогресса, рендерим по умолчанию:", e);
-    }
+    // Загружаем данные и рендерим карту
+    loadProgress(() => {
+        renderMapTree();
+        renderArcanumGrid();
+    });
 
-    // Принудительный рендер на случай, если loadProgress завис из-за ошибки Telegram
+    // Резервный вызов рендера
     setTimeout(() => {
         renderMapTree();
         renderArcanumGrid();
@@ -137,7 +141,8 @@ window.onload = function() {
 
 function switchMode(targetScreenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-    document.getElementById(targetScreenId).classList.add('active-screen');
+    const target = document.getElementById(targetScreenId);
+    if (target) target.classList.add('active-screen');
 
     document.querySelectorAll('.btn-nav-mode').forEach(btn => btn.classList.remove('active'));
     
@@ -150,7 +155,8 @@ function switchMode(targetScreenId) {
 
 function goToScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-    document.getElementById(screenId).classList.add('active-screen');
+    const target = document.getElementById(screenId);
+    if (target) target.classList.add('active-screen');
 }
 
 function renderMapTree() {
@@ -188,6 +194,8 @@ function renderArcanumGrid() {
     const grid = document.getElementById('cards-grid-container');
     if (!grid) return;
     grid.innerHTML = '';
+
+    if (typeof arcanumData === 'undefined') return;
 
     arcanumData.forEach(card => {
         const cardEl = document.createElement('div');
@@ -240,7 +248,8 @@ function handleChoice(choice) {
 
     if (choice.isCorrect) {
         userXP += 15;
-        document.getElementById('xp-count').innerText = userXP;
+        const xpEl = document.getElementById('xp-count');
+        if (xpEl) xpEl.innerText = userXP;
 
         const nextQuest = quests.find(q => q.id === currentQuestId + 1);
         if (nextQuest) {
@@ -252,10 +261,10 @@ function handleChoice(choice) {
 
         saveProgress();
         renderMapTree();
-        showModal("Мудрое решение!", choice.msg, quest.image);
+        showModal("Мудрое решение!", choice.msg, quest ? quest.image : '');
     } else {
         pendingNextQuest = null;
-        showModal("Подумай ещё...", choice.msg, quest.image);
+        showModal("Подумай ещё...", choice.msg, quest ? quest.image : '');
     }
 }
 
@@ -275,14 +284,21 @@ function showModal(title, text, imageSrc = '') {
         imgEl.style.display = 'none';
     }
 
-    document.getElementById('custom-modal').style.display = 'flex';
+    const modal = document.getElementById('custom-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+    }
 }
 
 function closeModal() {
-    document.getElementById('custom-modal').style.display = 'none';
-    if (pendingNextQuest !== null) {
-        const nextId = pendingNextQuest;
-        pendingNextQuest = null;
-        goToScreen('menu-screen');
+    const modal = document.getElementById('custom-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
     }
+    
+    // Всегда возвращаемся к карте после ответа
+    goToScreen('menu-screen');
+    renderMapTree();
 }

@@ -21,34 +21,46 @@ function initAdsgram() {
     }
 }
 
-// Сохранение прогресса
+// Безопасное сохранение прогресса
 function saveProgress() {
     const unlockedQuestIds = quests.filter(q => q.unlocked).map(q => q.id);
     const data = {
         userXP: userXP,
         unlockedQuests: unlockedQuestIds
     };
-
     const jsonStr = JSON.stringify(data);
 
+    // Всегда сохраняем в локальное хранилище браузера
     localStorage.setItem('arcanum_game_data', jsonStr);
 
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.CloudStorage) {
-        window.Telegram.WebApp.CloudStorage.setItem('arcanum_game_data', jsonStr, (err, success) => {
-            if (err) console.log("Ошибка сохранения в CloudStorage:", err);
-        });
+    // Сохраняем в Telegram CloudStorage ТОЛЬКО если версия API >= 6.9
+    try {
+        if (window.Telegram?.WebApp?.isVersionAtLeast && window.Telegram.WebApp.isVersionAtLeast('6.9')) {
+            window.Telegram.WebApp.CloudStorage.setItem('arcanum_game_data', jsonStr);
+        }
+    } catch (e) {
+        console.warn("CloudStorage не поддерживается текущим клиентом");
     }
 }
 
-// Загрузка прогресса
+// Безопасная загрузка прогресса
 function loadProgress(callback) {
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.CloudStorage) {
-        window.Telegram.WebApp.CloudStorage.getItem('arcanum_game_data', (err, value) => {
-            let rawData = value || localStorage.getItem('arcanum_game_data');
-            applyData(rawData);
-            if (callback) callback();
-        });
-    } else {
+    let loaded = false;
+
+    try {
+        if (window.Telegram?.WebApp?.isVersionAtLeast && window.Telegram.WebApp.isVersionAtLeast('6.9')) {
+            window.Telegram.WebApp.CloudStorage.getItem('arcanum_game_data', (err, value) => {
+                let rawData = value || localStorage.getItem('arcanum_game_data');
+                applyData(rawData);
+                if (callback) callback();
+            });
+            loaded = true;
+        }
+    } catch (e) {
+        console.warn("Ошибка CloudStorage, переходим на localStorage:", e);
+    }
+
+    if (!loaded) {
         let rawData = localStorage.getItem('arcanum_game_data');
         applyData(rawData);
         if (callback) callback();
@@ -61,7 +73,8 @@ function applyData(rawData) {
         const data = JSON.parse(rawData);
         if (data.userXP !== undefined) {
             userXP = data.userXP;
-            document.getElementById('xp-count').innerText = userXP;
+            const xpEl = document.getElementById('xp-count');
+            if (xpEl) xpEl.innerText = userXP;
         }
         if (data.unlockedQuests && Array.isArray(data.unlockedQuests)) {
             quests.forEach(q => {
@@ -71,13 +84,15 @@ function applyData(rawData) {
             });
         }
     } catch (e) {
-        console.error("Ошибка чтения прогресса:", e);
+        console.error("Ошибка чтения данных:", e);
     }
 }
 
-// Реклама
+// Показ рекламы Adsgram
 function showRewardAd() {
-    if (!AdController) initAdsgram();
+    if (!AdController) {
+        initAdsgram();
+    }
 
     if (!AdController) {
         showModal("Информация", "Рекламный модуль ещё загружается. Перезапустите страницу или попробуйте чуть позже.");
@@ -110,7 +125,7 @@ window.onload = function() {
 function skipIntro() {
     clearTimeout(autoStartTimer);
     const loadScreen = document.getElementById('loading-screen');
-    if (!loadScreen.classList.contains('active-screen')) return;
+    if (!loadScreen || !loadScreen.classList.contains('active-screen')) return;
     
     loadScreen.style.transition = 'opacity 0.3s ease';
     loadScreen.style.opacity = '0';
@@ -140,6 +155,7 @@ function goToScreen(screenId) {
 
 function renderMapTree() {
     const container = document.getElementById('map-tree');
+    if (!container) return;
     container.innerHTML = '';
 
     quests.forEach((q, index) => {
@@ -170,6 +186,7 @@ function renderMapTree() {
 
 function renderArcanumGrid() {
     const grid = document.getElementById('cards-grid-container');
+    if (!grid) return;
     grid.innerHTML = '';
 
     arcanumData.forEach(card => {

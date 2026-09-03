@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обитель Арканов: Пробуждение Источника</title>
+
+    <!-- Скрипты платформ -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdndeliver.net/adsgram/adsgram-ad.js"></script>
+    
+    <!-- Предзагрузка ресурсов -->
+    <link rel="preload" as="image" href="fon.png">
+    <link rel="preload" as="image" href="cat.png">
+
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="phone-container">
+
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-card">
+            <img id="modal-image" class="modal-img" src="" alt="Аркан" onerror="this.style.display='none'">
+            <h3 id="modal-title" class="modal-title">Заголовок</h3>
+            <div id="modal-text" class="modal-text">Текст...</div>
+            <button class="btn-modal-close" onclick="closeModal()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 1: СТАРТ -->
+    <div id="loading-screen" class="screen active-screen" onclick="skipIntro()" style="justify-content: center; align-items: center; text-align: center; cursor: pointer;">
+        <img src="cat.png" style="max-width: 180px; width: 100%; border-radius: 20px; border: 2px solid var(--gold-glow); box-shadow: 0 0 25px rgba(226,201,116,0.3);" alt="Хранитель" onerror="this.style.display='none'">
+        <h2 style="color: var(--gold-glow); margin-top:15px;">Приветствую, Мастер</h2>
+        <p style="font-style: italic; max-width: 280px; font-size: 13px; color: rgba(245, 240, 250, 0.85);">«Твой Источник пробуждается. Я укажу тебе дорогу к древним арканам...»</p>
+        <span style="font-size: 11px; color: var(--gold-glow); opacity: 0.6; margin-top: 10px;">(Коснись, чтобы войти)</span>
+    </div>
+
+    <!-- ЭКРАН 2: КАРТА ИСПЫТАНИЙ -->
+    <div id="menu-screen" class="screen">
+        <div class="top-bar">
+            <div class="stat-badge"> Мастер Арканов</div>
+            <div class="stat-badge"> Сила: <span id="xp-count">0</span></div>
+            <button onclick="showRewardAd()" class="stat-badge" style="background: rgba(226, 201, 116, 0.2); color: #e2c974; cursor: pointer; border: 1px solid #e2c974;">
+                 +30 Силы
+            </button>
+        </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode active" onclick="switchMode('menu-screen')"> Испытания</button>
+            <button class="btn-nav-mode" onclick="switchMode('arcanum-screen')"> Книга Арканов</button>
+        </div>
+        
+        <div class="cat-instructor-box">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%2325123e\'/><text x=\'50%\' y=\'55%\' font-size=\'20\' fill=\'%23e2c974\' text-anchor=\'middle\' dominant-baseline=\'middle\'></text></svg>'">
+            <div class="cat-bubble" id="cat-menu-text">
+                «Мастер, Храм Судеб открыт. С какого Аркана начнём наше вспоминание?»
+            </div>
+        </div>
+
+        <div class="path-container" id="map-tree"></div>
+    </div>
+
+    <!-- ЭКРАН РАЗДЕЛА: КНИГА АРКАНОВ -->
+    <div id="arcanum-screen" class="screen">
+        <div class="top-bar">
+            <div class="stat-badge"> Справочник</div>
+            <div class="stat-badge">Старшие Арканы</div>
+        </div>
+
+        <div class="mode-nav">
+            <button class="btn-nav-mode" onclick="switchMode('menu-screen')"> Испытания</button>
+            <button class="btn-nav-mode active" onclick="switchMode('arcanum-screen')"> Книга Арканов</button>
+        </div>
+
+        <div class="cat-instructor-box">
+            <img src="cat.png" class="cat-avatar" alt="Кот" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%2325123e\'/><text x=\'50%\' y=\'55%\' font-size=\'20\' fill=\'%23e2c974\' text-anchor=\'middle\' dominant-baseline=\'middle\'></text></svg>'">
+            <div class="cat-bubble">
+                «Перед тобой карты нашего храма. Выбери любую, чтобы изучить её тайный архетип!»
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cards-grid-container"></div>
+    </div>
+
+    <!-- ЭКРАН 3: УНИВЕРСАЛЬНЫЙ ЗАЛ ИСПЫТАНИЙ -->
+    <div id="game-screen" class="screen">
+        <div class="top-bar">
+            <button onclick="goToScreen('menu-screen')" style="background: transparent; color: var(--gold-glow); border: none; cursor: pointer; font-size: 15px;"> В обитель</button>
+            <div class="stat-badge" id="level-badge">XVI Аркан</div>
+        </div>
+
+        <div class="mystic-panel">
+            <img id="level-image" src="" class="card-visual" alt="Аркан" onerror="this.style.display='none'">
+            <h4 style="margin-top: 0; color: var(--gold-glow); letter-spacing: 1px;" id="level-title">Запрос Силы</h4>
+            <p style="margin-bottom: 0; font-size: 14px;" id="level-text">Текст вопроса...</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: flex-end;" id="options-container"></div>
+    </div>
+
+</div>
+
+<!-- Скрипты приложения -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

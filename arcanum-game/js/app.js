@@ -115,25 +115,25 @@ function showRewardAd() {
 
 window.onload = function() {
     initAdsgram();
-    loadProgress(() => {
+    
+    // Загружаем данные
+    try {
+        loadProgress(() => {
+            renderMapTree();
+            renderArcanumGrid();
+        });
+    } catch(e) {
+        console.error("Ошибка при загрузке прогресса, рендерим по умолчанию:", e);
+    }
+
+    // Принудительный рендер на случай, если loadProgress завис из-за ошибки Telegram
+    setTimeout(() => {
         renderMapTree();
         renderArcanumGrid();
-    });
+    }, 300);
+
     autoStartTimer = setTimeout(skipIntro, 1200);
 };
-
-function skipIntro() {
-    clearTimeout(autoStartTimer);
-    const loadScreen = document.getElementById('loading-screen');
-    if (!loadScreen || !loadScreen.classList.contains('active-screen')) return;
-    
-    loadScreen.style.transition = 'opacity 0.3s ease';
-    loadScreen.style.opacity = '0';
-    setTimeout(() => {
-        loadScreen.classList.remove('active-screen');
-        document.getElementById('menu-screen').classList.add('active-screen');
-    }, 300);
-}
 
 function switchMode(targetScreenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));

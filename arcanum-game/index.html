@@ -5,18 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Обитель Арканов: Пробуждение Источника</title>
 
-    <!-- ГЛОБАЛЬНЫЙ ПЕРЕХВАТ ОШИБОК TELEGRAM -->
+    <!-- ГЛОБАЛЬНЫЙ ПЕРЕХВАТ ОШИБОК И ЗАГЛУШКА ДЛЯ TELEGRAM WEBAPP -->
     <script>
+      // 1. Подавление падения при вызове необрабатываемых методов
       window.addEventListener('error', function(e) {
-        if (e.message && e.message.includes('WebAppMethodUnsupported')) {
+        if (e.message && (e.message.includes('WebAppMethodUnsupported') || e.message.includes('CloudStorage'))) {
           e.stopImmediatePropagation();
           e.preventDefault();
-          console.warn('Перехвачена ошибка версии Telegram WebApp');
+          console.warn('Перехвачена ошибка совместимости Telegram WebApp');
           return true;
         }
       }, true);
+
+      // 2. Безопасная заглушка CloudStorage до загрузки самого скрипта Telegram
+      window.Telegram = window.Telegram || {};
+      window.Telegram.WebApp = window.Telegram.WebApp || {};
+      window.Telegram.WebApp.CloudStorage = {
+        getItem: function(key, callback) { if (callback) callback(null, null); },
+        setItem: function(key, val, callback) { if (callback) callback(null); },
+        getItems: function(keys, callback) { if (callback) callback(null, []); },
+        removeItem: function(key, callback) { if (callback) callback(null); },
+        removeItems: function(keys, callback) { if (callback) callback(null); },
+        getKeys: function(callback) { if (callback) callback(null, []); }
+      };
     </script>
 
+    <!-- Скрипты платформ -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad-async.js"></script>
 
@@ -114,8 +128,8 @@
 
 </div>
 
-<!-- Скрипты приложения -->
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<!-- Скрипты приложения с принудительным обходом кэша -->
+<script src="js/data.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 </body>
 </html>

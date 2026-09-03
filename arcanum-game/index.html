@@ -5,22 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Обитель Арканов: Пробуждение Источника</title>
 
-    <!-- Безопасная заглушка для CloudStorage в старых версиях Telegram -->
+    <!-- ГЛОБАЛЬНЫЙ ПЕРЕХВАТ ОШИБОК TELEGRAM -->
     <script>
-      window.Telegram = window.Telegram || {};
-      window.Telegram.WebApp = window.Telegram.WebApp || {};
-      if (!window.Telegram.WebApp.CloudStorage) {
-        window.Telegram.WebApp.CloudStorage = {
-          getItem: function(key, callback) { if(callback) callback(null, null); },
-          setItem: function(key, val, callback) { if(callback) callback(null); }
-        };
-      }
+      window.addEventListener('error', function(e) {
+        if (e.message && e.message.includes('WebAppMethodUnsupported')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          console.warn('Перехвачена ошибка версии Telegram WebApp');
+          return true;
+        }
+      }, true);
     </script>
 
-    <!-- Скрипт Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Официальный рабочий скрипт Adsgram -->
     <script src="https://sad.adsgram.ai/js/sad-async.js"></script>
 
     <!-- Предзагрузка ресурсов -->
